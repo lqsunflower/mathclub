@@ -1,0 +1,7 @@
+jdbcUrl = jdbc:mysql://localhost/mathclub?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+user = root
+password =root
+devMode = true
+appId=wxfa57b2b9baf9839a
+appSecret=c0d3572dc870e6f670d1568b12bde687
+token=mathclub
