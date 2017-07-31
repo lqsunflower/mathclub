@@ -3,52 +3,35 @@
  */
 package com.mathclub.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.jfinal.core.Controller;
-import com.jfinal.kit.PathKit;
+import com.jfinal.core.ActionKey;
+import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
-import com.mathclub.common.ImageKit;
-import com.mathclub.common.Ret;
+import com.mathclub.service.UploadService;
 
 /**
  * @author Administrator
+ * 上传返回路径
  *
  */
-public class UploadController extends Controller{
+public class UploadController extends BaseController {
 
-	Ret res = new Ret();
+	private UploadService uploadService = new UploadService();
+
 	/**
-	 * 上传图像到临时目录，发回路径供 jcrop 裁切
+	 * 上传图像到临时目录，发回路径
 	 */
-	public Ret uploadFile() {
-		UploadFile file = getFile("fileName");
-		String fileName = file.getFileName();
+	@ActionKey("/uploadFile")
+	public void uploadFile() {
+		UploadFile file = null;
+		file = getFile("file", uploadService.getTempDir(), uploadService.getMaxSize());
 		if (file == null) {
-			res.setCode("-1");
-			res.setSummary("上传文件UploadFile对象不能为null");
-			renderJson(res);
+			renderJson(Ret.fail("msg", "请先选择上传文件"));
+			return;
 		}
-
-		try {
-			if (ImageKit.notImageExtName(fileName)) {
-				res.setCode("-1");
-				res.setSummary("文件类型不正确，只支持图片类型：gif、jpg、jpeg、png、bmp");
-				renderJson(res);
-			}
-			
-			String imageUrl = "/upload/image" +System.currentTimeMillis() + file;
-			String saveFile = PathKit.getWebRootPath() + imageUrl;
-			Map<String,Object> map = new HashMap<String,Object>();
-			map.put("code", "S_OK");
-			map.put("imageUrl", saveFile);
-			renderJson(map);
+		Ret ret = uploadService.upload(file);
+		if (ret.isOk()) {   // 上传成功则将文件 url 径暂存起来，供下个环节进行裁切
+			setSessionAttr("fileUrl", ret.get("fileUrl"));
 		}
-		catch (Exception e) {
-			return Ret.fail("msg", e.getMessage());
-		} finally {
-			((Object) file).delete();
-		}
+		renderJson(ret);
 	}
 }

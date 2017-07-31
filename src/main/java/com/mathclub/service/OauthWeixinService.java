@@ -27,7 +27,7 @@ public class OauthWeixinService {
         sb.append("&secret=").append(appSecret).append("&code=").append(code).append("&grant_type=authorization_code");
         String url = sb.toString();
         String json = HttpKit.get(url);
-        log.info("result="+ json);
+        log.error("result="+ json);
         return new SnsAccessToken(json);
     }
 	
