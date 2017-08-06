@@ -3,6 +3,8 @@
  */
 package com.mathclub.model;
 
+import java.sql.Timestamp;
+
 import com.jfinal.plugin.activerecord.Model;
 
 /**
@@ -15,7 +17,9 @@ public class Subject extends Model<Subject> {
 	public static final User dao = new User().dao();
 	
 	private static final long serialVersionUID = 4489464881060983346L;
-	private int id;//题目id
+	private int subjectId;//题目id
+	private int keyId;//所属知识点id
+	private int majorId;//所属学科id
 	private String name;//题目名称
 	private String pic;//题目图片地址
 	private String apic;//答案图片地址
@@ -25,13 +29,13 @@ public class Subject extends Model<Subject> {
 	private String hint;//提示
 	private String author;//题目作者
 	private String tags;//标签列表
-	private String keyIds;//所属知识点id列表
+	private Timestamp createTime;//创建时间
 	
-	public int getId() {
-		return id;
+	public int getSubjectId() {
+		return subjectId;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setSubjectId(int subjectId) {
+		this.subjectId = subjectId;
 	}
 	public String getName() {
 		return name;
@@ -87,11 +91,23 @@ public class Subject extends Model<Subject> {
 	public void setTags(String tags) {
 		this.tags = tags;
 	}
-	public String getKeyIds() {
-		return keyIds;
+	public int getKeyId() {
+		return keyId;
 	}
-	public void setKeyIds(String keyIds) {
-		this.keyIds = keyIds;
+	public void setKeyId(int keyId) {
+		this.keyId = keyId;
+	}
+	public int getMajorId() {
+		return majorId;
+	}
+	public void setMajorId(int majorId) {
+		this.majorId = majorId;
+	}
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 	
 }
