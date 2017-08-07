@@ -51,7 +51,7 @@ public class AdminService {
 	}
 
 	public Page<Subject> getSubjectListByKeyId(int keyId) {
-		return subjectDao.paginate(1, 10, "select *", "from subject where keyId=? order by createTime desc", keyId);
+		return subjectDao.paginate(2, 1, "select *", "from subject where keyId=? order by createTime desc", keyId);
 	}
 
 	public Subject getSubjectInfo(Integer subjectId, Integer keyId) {

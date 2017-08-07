@@ -7,10 +7,13 @@
  */
 package com.mathclub.controller;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.mathclub.model.Subject;
 import com.mathclub.service.AdminService;
 import com.mathclub.service.SubjectService;
@@ -29,7 +32,7 @@ public class SubjectController extends BaseController
 
     /**
      * 根据题目ID获取题目信息
-     */
+     *//*
     @ActionKey("/subject:findById")
     public void getSubjectInfo()
     {
@@ -38,7 +41,7 @@ public class SubjectController extends BaseController
         Subject subject = service.getSubjectInfo(getParaToInt("subjectId"),
             getParaToInt("keyId"));
         renderJson(subject);
-    }
+    }*/
 
     /**
      * 根据题目ID获取题目信息
@@ -68,9 +71,20 @@ public class SubjectController extends BaseController
         }
         else
         {
-            renderJson(Ret.fail("code", "-2"));
+            renderJson(Ret.fail("summary", "数据库操作失败"));
         }
 
     }
+    
+    /**
+     * 搜索根据知识点名字获取题目信息
+     */
+	@ActionKey("/subject:searchSubject")
+	public void getSubjectListByName() {
+		log.info("search subject list request name =" + getPara("name"));
+		List<Subject> subjectList = subjectService.getSubjectListByName(getPara("name"));
+		renderJson(subjectList);
+	}
 
+    
 }

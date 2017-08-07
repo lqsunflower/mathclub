@@ -10,6 +10,7 @@ package com.mathclub.service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.jfinal.plugin.activerecord.Db;
@@ -54,5 +55,9 @@ public class SubjectService
         Record record = new Record().setColumns(map);
         return Db.save("support", "id", record);
     }
+
+	public List<Subject> getSubjectListByName(String name) {
+		return subjectDao.find("select s.*, k.keyId from subject s inner join keypoint k on s.keyId=k.keyId where k.name=?", name);
+	}
 
 }
