@@ -11,8 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.model.Subject;
 import com.mathclub.service.AdminService;
 import com.mathclub.service.SubjectService;
