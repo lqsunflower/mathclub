@@ -19,6 +19,7 @@ import com.mathclub.controller.MsgController;
 import com.mathclub.controller.OauthWeixinController;
 import com.mathclub.controller.SubjectController;
 import com.mathclub.model.KeyPoint;
+import com.mathclub.model.Like;
 import com.mathclub.model.Major;
 import com.mathclub.model.Subject;
 import com.mathclub.model.User;
@@ -93,6 +94,7 @@ public class MathClubConfig extends JFinalConfig {
 		arp.addMapping("major", "majorId", Major.class);
 		arp.addMapping("keyPoint", "keyId", KeyPoint.class);
 		arp.addMapping("subject", "subjectId", Subject.class);
+		arp.addMapping("like", "id", Like.class);
 	}
 
 	/*

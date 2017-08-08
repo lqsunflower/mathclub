@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.Ret;
 import com.mathclub.model.Subject;
+import com.mathclub.model.SubjectVo;
 import com.mathclub.service.AdminService;
 import com.mathclub.service.SubjectService;
 
@@ -43,12 +44,12 @@ public class SubjectController extends BaseController
     }*/
 
     /**
-     * 根据题目ID获取题目信息
+     * 点赞
      */
-    @ActionKey("/subject:supportSubject")
-    public void supportSubject()
+    @ActionKey("/subject:likeSubject")
+    public void likeSubject()
     {
-        log.info("support subject info request userId="
+        log.info("like subject info request userId="
             + getParaToInt("userId") + " subjectId ="
             + getParaToInt("subjectId") + " type=" + getParaToInt("type"));
         int type = getParaToInt("type");
@@ -82,8 +83,28 @@ public class SubjectController extends BaseController
 	public void getSubjectListByName() {
 		log.info("search subject list request name =" + getPara("name"));
 		List<Subject> subjectList = subjectService.getSubjectListByName(getPara("name"));
-		renderJson(subjectList);
+		if(subjectList != null){
+		    renderJson(subjectList);
+		}else{
+		    renderJson(Ret.ok("summary", "没有题目信息"));
+		}
+		
 	}
+	
+	/**
+     * 搜索根据题目ID获取题目信息
+     */
+    @ActionKey("/subject:getSubjectInfoBySubjectId")
+    public void getSubjectInfo() {
+        log.info("get subject info request name =" + getPara("subjectId"));
+        SubjectVo subject = subjectService.getSubjectInfo(getPara("subjectId"), getPara("userId"));
+        if(subject != null){
+            renderJson(subject);
+        }else{
+            renderJson("msg", "没有该题目");
+        }
+       
+    }
 
     
 }
