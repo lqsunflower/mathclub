@@ -94,7 +94,7 @@ public class MathClubConfig extends JFinalConfig {
 		arp.addMapping("major", "majorId", Major.class);
 		arp.addMapping("keyPoint", "keyId", KeyPoint.class);
 		arp.addMapping("subject", "subjectId", Subject.class);
-		arp.addMapping("like", "id", Like.class);
+		arp.addMapping("subject_like", "userId", Like.class);
 	}
 
 	/*

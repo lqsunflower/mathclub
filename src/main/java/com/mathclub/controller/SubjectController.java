@@ -56,14 +56,14 @@ public class SubjectController extends BaseController
         if (type == 1 || type == 2)
         {
             boolean result = subjectService.checkUserExists(
-                getParaToInt("userId"), getParaToInt("subjectId"));
+                getParaToInt("userId"), getParaToInt("subjectId"),getParaToInt("type"));
             if (result)
             {
                 renderJson(Ret.fail("summary", "该用户已经点赞或点跪"));
                 return;
             }
         }
-        boolean res = subjectService.support(getParaToInt("userId"),
+        boolean res = subjectService.like(getParaToInt("userId"),
             getParaToInt("subjectId"), getParaToInt("type"));
         if (res)
         {
@@ -97,13 +97,12 @@ public class SubjectController extends BaseController
     @ActionKey("/subject:getSubjectInfoBySubjectId")
     public void getSubjectInfo() {
         log.info("get subject info request name =" + getPara("subjectId"));
-        SubjectVo subject = subjectService.getSubjectInfo(getPara("subjectId"), getPara("userId"));
+        SubjectVo subject = subjectService.getSubjectInfo(getParaToInt("subjectId"), getParaToInt("userId"));
         if(subject != null){
             renderJson(subject);
         }else{
             renderJson("msg", "没有该题目");
         }
-       
     }
 
     

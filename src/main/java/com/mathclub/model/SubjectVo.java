@@ -28,10 +28,9 @@ public class SubjectVo
     private String author;//题目作者
     private String tags;//标签列表
     private Timestamp createTime;//创建时间
-    private int likeCount;//点赞人数
-    private int unlikeCount;//点跪人数
-    private String[] isLike;//[是否点赞,是否点跪]
-    private int isFavorite;//是否收藏
+    private boolean[] sign;//[是否点赞,是否点跪]
+    private int[] userSign;//[点赞人数,是否点跪]
+    private boolean isFavorite;//是否收藏
     
     public int getSubjectId()
     {
@@ -137,37 +136,22 @@ public class SubjectVo
     {
         this.createTime = createTime;
     }
-   
-    public int getLikeCount()
-    {
-        return likeCount;
-    }
-    public void setLikeCount(int likeCount)
-    {
-        this.likeCount = likeCount;
-    }
-    public int getUnlikeCount()
-    {
-        return unlikeCount;
-    }
-    public void setUnlikeCount(int unlikeCount)
-    {
-        this.unlikeCount = unlikeCount;
-    }
-    public int getIsFavorite()
-    {
-        return isFavorite;
-    }
-    public void setIsFavorite(int isFavorite)
-    {
-        this.isFavorite = isFavorite;
-    }
-    public String[] getIsLike()
-    {
-        return isLike;
-    }
-    public void setIsLike(String[] isLike)
-    {
-        this.isLike = isLike;
-    }
+	public boolean[] getSign() {
+		return sign;
+	}
+	public void setSign(boolean[] sign) {
+		this.sign = sign;
+	}
+	public int[] getUserSign() {
+		return userSign;
+	}
+	public void setUserSign(int[] userSign) {
+		this.userSign = userSign;
+	}
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
 }
