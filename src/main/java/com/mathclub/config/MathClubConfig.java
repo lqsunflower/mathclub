@@ -18,6 +18,7 @@ import com.mathclub.controller.AdminController;
 import com.mathclub.controller.MsgController;
 import com.mathclub.controller.OauthWeixinController;
 import com.mathclub.controller.SubjectController;
+import com.mathclub.controller.UploadController;
 import com.mathclub.model.KeyPoint;
 import com.mathclub.model.Like;
 import com.mathclub.model.Major;
@@ -69,6 +70,7 @@ public class MathClubConfig extends JFinalConfig {
 		me.add("/oauth", OauthWeixinController.class);
 		me.add("/admin", AdminController.class);
 		me.add("/subject", SubjectController.class);
+		me.add("/upload", UploadController.class);
 	}
 
 	/*

@@ -105,5 +105,14 @@ public class SubjectController extends BaseController
         }
     }
 
+    /**
+     * 搜索根据题目ID获取题目信息
+     */
+    @ActionKey("/subject:querySubjectInfoByPage")
+    public void querySubjectInfoByPage() {
+        log.info("page query subject info request name =" + getPara("keyId"));
+        Ret ret = subjectService.querySubjectInfo(getParaToInt("userId"),getParaToInt("keyId"),getParaToInt("p", 1));
+        renderJson(ret);
+    }
     
 }

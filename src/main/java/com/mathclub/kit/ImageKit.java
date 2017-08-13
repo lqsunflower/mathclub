@@ -12,7 +12,7 @@
  * 首次的尝试扼杀在了摇篮之中
  */
 
-package com.mathclub.common;
+package com.mathclub.kit;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -20,10 +20,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import com.jfinal.kit.StrKit;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * ImageKit 图片高保真缩放与裁剪，不依赖于任何第三方库
@@ -87,7 +88,7 @@ public class ImageKit {
 	 * 1：当图像 width > maxWidth 时，将宽度变为 maxWidth，高度等比例进行缩放，高保真保存
 	 * 2:当图像 width <= maxWidth 时，宽高保持不变，只进行高保真保存
 	 */
-	/*public static void zoom(int maxWidth, File srcFile, String saveFile) {
+	public static void zoom(int maxWidth, File srcFile, String saveFile) {
 		float quality = 0.8f;
 
 		try {
@@ -97,11 +98,11 @@ public class ImageKit {
 
 			// 当宽度在 maxWidth 范围之内，不改变图像宽高，只进行图像高保真保存
 			if (srcWidth <= maxWidth) {
-				*//**
+				/**
 				 * 如果图像不进行缩放的话， resize 就没有必要了，
 				 * 经过测试是否有 resize 这一步，生成的结果图像完全一样，一个字节都不差
 				 * 所以删掉 resize，可以提升性能，少一步操作
-				 *//*
+				 */
 				// BufferedImage ret = resize(srcImage, srcWidth, srcHeight);
 				// saveWithQuality(ret, quality, saveFile);
 				saveWithQuality(srcImage, quality, saveFile);
@@ -116,7 +117,7 @@ public class ImageKit {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}*/
+	}
 
 	/**
 	 * 对图片进行剪裁，只保存选中的区域
@@ -202,18 +203,18 @@ public class ImageKit {
 	 * 建议使用 0.8 的 quality 并且稍大点的宽高
 	 * 只选用两种质量：0.8 与 0.9，这两个差别不是很大，
 	 * 但是如果尺寸大些的话，选用 0.8 比 0.9 要划算，因为占用的空间差不多的时候，尺寸大些的更清晰
-	 *//*
+	 */
 	public static void saveWithQuality(BufferedImage im, float quality, String outputImageFile) {
 		FileOutputStream newImage = null;
 		try {
-			 输出到文件流 
+			/* 输出到文件流 */
 			newImage = new FileOutputStream(outputImageFile);
 			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(newImage);
 			JPEGEncodeParam jep = JPEGCodec.getDefaultJPEGEncodeParam(im);
-			 压缩质量, 0.75 就算是高质量 
+			/* 压缩质量, 0.75 就算是高质量 */
 			jep.setQuality(quality, true);	// jep.setQuality(0.9f, true);
 			encoder.encode(im, jep);
-			 近JPEG编码 
+			/* 近JPEG编码 */
 			// newImage.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -222,7 +223,7 @@ public class ImageKit {
 				try {newImage.close();} catch (IOException e) {throw new RuntimeException(e);}
 			}
 		}
-	}*/
+	}
 }
 
 

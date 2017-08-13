@@ -7,17 +7,14 @@
  */
 package com.mathclub.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.util.log.Log;
 
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.Page;
 import com.mathclub.model.Like;
 import com.mathclub.model.Subject;
 import com.mathclub.model.SubjectVo;
@@ -31,6 +28,7 @@ public class SubjectService {
 	public static final Subject subjectDao = new Subject().dao();
 	private static final Like likeDao = new Like().dao();
 	private static Logger log = Logger.getLogger(SubjectService.class);
+	final int pageSize = 1;
 
 	/**
 	 * 检查用户是否已点赞或点跪
@@ -116,11 +114,63 @@ public class SubjectService {
 					userId, subjectId);
 			if (n != null) {
 				sv.setFavorite(true);
-			}else{
+			} else {
 				sv.setFavorite(false);
 			}
 			return sv;
 		}
 	}
 
+	public Ret querySubjectInfo(int userId, int keyId, int pageNum) {
+		Page<Subject> sub = getSubjectPage(keyId, pageNum);
+		boolean[] sign = new boolean[2];
+		int[] userSign = new int[2];
+		List<Subject> list = sub.getList();
+		if (list == null) {
+			return Ret.fail("msg", "该知识点没有题目");
+		}
+		SubjectVo subVo =JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
+		System.out.println("subjet0000 " + subVo.getName() + "kkk=" + subVo.getTags());
+		// 根据题目id查询点赞人数和点跪人数，并且查询是否点赞或者点跪
+		int likeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 1",
+				subVo.getSubjectId());
+		int unlikeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 2",
+				subVo.getSubjectId());
+		userSign[0] = likeCount;
+		userSign[1] = unlikeCount;
+		subVo.setUserSign(userSign);
+		Like like = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 1",
+				userId, subVo.getSubjectId());
+		if (like != null) {
+			sign[0] = true;
+		} else {
+			sign[0] = false;
+		}
+		Like unlike = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 2",
+				userId, subVo.getSubjectId());
+		if (unlike != null) {
+			sign[1] = true;
+		} else {
+			sign[1] = false;
+		}
+		subVo.setSign(sign);
+		Integer n = Db.queryInt("select * from subject_like where userId = ? and subjectId = ? and type = 3", userId,
+				subVo.getSubjectId());
+		if (n != null) {
+			subVo.setFavorite(true);
+		} else {
+			subVo.setFavorite(false);
+		}
+		return Ret.create().set("subject",subVo);
+	}
+
+	/**
+	 * 获取非自己的某位用户关注列表 与 MyFriendService 中不同，非自己用户所关注的人与自己的好友关系需要单独计算
+	 * MyFriendService 的 getFollowList 中的目标用户列表已经具备了被关注的条件
+	 */
+	private Page<Subject> getSubjectPage(int keyId, int pageNum) {
+		String select = "select *";
+		String sql = "from subject where keyId = ? order by createTime desc";
+		return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
+	}
 }

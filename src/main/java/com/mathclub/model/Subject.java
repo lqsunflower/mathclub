@@ -14,8 +14,6 @@ import com.jfinal.plugin.activerecord.Model;
  */
 public class Subject extends Model<Subject> {
 
-	public static final User dao = new User().dao();
-	
 	private static final long serialVersionUID = 4489464881060983346L;
 	private int subjectId;//题目id
 	private int keyId;//所属知识点id
