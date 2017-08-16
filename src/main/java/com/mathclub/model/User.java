@@ -19,6 +19,8 @@ public class User extends Model<User>{
 	private String openid;//用户微信唯一标识
 	private String nickname;//用户微信昵称
 	private String headimgurl;//用户头像
+	private String ip;//用户ip
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -42,6 +44,12 @@ public class User extends Model<User>{
 	}
 	public void setHeadimgurl(String headimgurl) {
 		this.headimgurl = headimgurl;
+	}
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 	
 }
