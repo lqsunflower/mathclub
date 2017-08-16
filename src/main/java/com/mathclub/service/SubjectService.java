@@ -1,17 +1,16 @@
 /**
  * 文件名：SubjectService.java
- * 创建日期： 2017年8月7日
- * 作者：     richinfo
- * Copyright (c) 2009-2017 邮箱开发室
- * All rights reserved.
  */
 package com.mathclub.service;
 
 import java.util.Date;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.json.JsonManager;
+import com.jfinal.json.MixedJsonFactory;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
@@ -121,12 +120,19 @@ public class SubjectService {
 		}
 	}
 
+	/**
+	 * 分页查询
+	 * @param userId
+	 * @param keyId
+	 * @param pageNum
+	 * @return
+	 */
 	public Ret querySubjectInfo(int userId, int keyId, int pageNum) {
 		Page<Subject> sub = getSubjectPage(keyId, pageNum);
 		boolean[] sign = new boolean[2];
 		int[] userSign = new int[2];
 		List<Subject> list = sub.getList();
-		if (list == null) {
+		if (list == null || list.size() == 0) {
 			return Ret.fail("msg", "该知识点没有题目");
 		}
 		SubjectVo subVo =JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
@@ -161,12 +167,11 @@ public class SubjectService {
 		} else {
 			subVo.setFavorite(false);
 		}
-		return Ret.create().set("subject",subVo);
+		return Ret.create("state","ok").set("subject",subVo).set("page", 1);
 	}
 
 	/**
-	 * 获取非自己的某位用户关注列表 与 MyFriendService 中不同，非自己用户所关注的人与自己的好友关系需要单独计算
-	 * MyFriendService 的 getFollowList 中的目标用户列表已经具备了被关注的条件
+	 * 分页查询页数
 	 */
 	private Page<Subject> getSubjectPage(int keyId, int pageNum) {
 		String select = "select *";
