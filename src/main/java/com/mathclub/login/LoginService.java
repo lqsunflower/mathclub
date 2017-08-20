@@ -30,20 +30,21 @@ import java.util.Date;
 public class LoginService {
 
 	public static final LoginService me = new LoginService();
-	private final User accountDao = new User().dao();
+	private final User userDao = new User().dao();
 
+	
 	// 存放登录用户的 cacheName
-	public static final String loginAccountCacheName = "loginAccount";
+	public static final String loginUserCacheName = "loginUser";
 
 	// "jfinalId" 仅用于 cookie 名称，其它地方如 cache 中全部用的 "sessionId" 来做 key
 	public static final String sessionIdName = "liqiuId";
 
 	/**
-	 * 登录成功返回 sessionId 与 loginAccount，否则返回一个 msg
+	 * 登录成功返回 sessionId 与 loginUser，否则返回一个 msg
 	 */
-	public Ret login(String openid, boolean keepLogin, String loginIp) {
-		User loginAccount = accountDao.findFirst("select * from user where openid=? limit 1", openid);
-		if (loginAccount == null) {
+	public Ret login(String openId, boolean keepLogin, String loginIp) {
+		User loginUser = userDao.findFirst("select * from user where openId=? limit 1", openId);
+		if (loginUser == null) {
 			return Ret.fail("msg", "用户名或密码不正确");
 		}
 		// 如果用户勾选保持登录，暂定过期时间为 3 年，否则为 120 分钟，单位为秒
@@ -56,28 +57,30 @@ public class LoginService {
 		Session session = new Session();
 		String sessionId = StrKit.getRandomUUID();
 		session.setId(sessionId);
-		session.setAccountId(loginAccount.getUserId());
+		session.setUserId(loginUser.toRecord().get("userId"));
+		System.out.println("userId=  " + loginUser.toRecord().get("userId"));
+		
 		session.setExpireAt(expireAt);
-		if ( !session.save()) {
+		if (!session.save()) {
 			return Ret.fail("msg", "保存 session 到数据库失败，请联系管理员");
 		}
-		loginAccount.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
-		CacheKit.put(loginAccountCacheName, sessionId, loginAccount);
+		loginUser.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
+		CacheKit.put(loginUserCacheName, sessionId, loginUser);
 
-		createLoginLog(loginAccount.getUserId(), loginIp);
+		createLoginLog(loginUser.toRecord().get("userId"), loginIp);
 
 		return Ret.ok(sessionIdName, sessionId)
-						.set(loginAccountCacheName, loginAccount)
+						.set(loginUserCacheName, loginUser)
 						.set("maxAgeInSeconds", maxAgeInSeconds);   // 用于设置 cookie 的最大存活时间
 	}
 
 	public User getLoginAccountWithSessionId(String sessionId) {
-		return CacheKit.get(loginAccountCacheName, sessionId);
+		return CacheKit.get(loginUserCacheName, sessionId);
 	}
 
 	/**
 	 * 通过 sessionId 获取登录用户信息
-	 * sessoin表结构：session(id, accountId, expireAt)
+	 * sessoin表结构：session(id, userId, expireAt)
 	 *
 	 * 1：先从缓存里面取，如果取到则返回该值，如果没取到则从数据库里面取
 	 * 2：在数据库里面取，如果取到了，则检测是否已过期，如果过期则清除记录，
@@ -93,14 +96,14 @@ public class LoginService {
 			return null;
 		}
 
-		User loginAccount = accountDao.findById(session.getAccountId());
+		User loginUser = userDao.findById(session.getUserId());
 		// 找到 loginAccount 并且 是正常状态 才允许登录
-		if (loginAccount != null) {
-			loginAccount.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
-			CacheKit.put(loginAccountCacheName, sessionId, loginAccount);
+		if (loginUser != null) {
+			loginUser.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
+			CacheKit.put(loginUserCacheName, sessionId, loginUser);
 
-			createLoginLog(loginAccount.getUserId(), loginIp);
-			return loginAccount;
+			createLoginLog(loginUser.getUserId(), loginIp);
+			return loginUser;
 		}
 		return null;
 	}
@@ -109,7 +112,7 @@ public class LoginService {
 	 * 创建登录日志
 	 */
 	private void createLoginLog(Integer accountId, String loginIp) {
-		Record loginLog = new Record().set("accountId", accountId).set("ip", loginIp).set("loginAt", new Date());
+		Record loginLog = new Record().set("userId", accountId).set("ip", loginIp).set("loginAt", new Date());
 		Db.save("login_log", loginLog);
 	}
 
@@ -119,7 +122,7 @@ public class LoginService {
 	 */
 	public void logout(String sessionId) {
 		if (sessionId != null) {
-			CacheKit.remove(loginAccountCacheName, sessionId);
+			CacheKit.remove(loginUserCacheName, sessionId);
 			Session.dao.deleteById(sessionId);
 		}
 	}
@@ -129,13 +132,14 @@ public class LoginService {
 	 */
 	public void reloadLoginAccount(User loginAccountOld) {
 		String sessionId = loginAccountOld.get("sessionId");
-		User loginAccount = accountDao.findFirst("select * from user where userId=? limit 1", loginAccountOld.getUserId());
-		loginAccount.put("sessionId", sessionId);        // 保存一份 sessionId 到 loginAccount 备用
+		User loginUser = userDao.findFirst("select * from user where userId=? limit 1", loginAccountOld.getUserId());
+		loginUser.put("sessionId", sessionId);        // 保存一份 sessionId 到 loginAccount 备用
 
 		// 集群方式下，要做一通知其它节点的机制，让其它节点使用缓存更新后的数据，
 		// 将来可能把 account 用 id : obj 的形式放缓存，更新缓存只需要 CacheKit.remove("account", id) 就可以了，
 		// 其它节点发现数据不存在会自动去数据库读取，所以未来可能就是在 AccountService.getById(int id)的方法引入缓存就好
 		// 所有用到 account 对象的地方都从这里去取
-		CacheKit.put(loginAccountCacheName, sessionId, loginAccount);
+		CacheKit.put(loginUserCacheName, sessionId, loginUser);
 	}
+	
 }

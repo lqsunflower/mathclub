@@ -28,7 +28,7 @@ public class LoginSessionInterceptor implements Interceptor {
 			}
 			if (loginAccount != null) {
 				// 用户登录账号
-				c.setAttr(LoginService.loginAccountCacheName, loginAccount);
+				c.setAttr(LoginService.loginUserCacheName, loginAccount);
 			} else {
 				c.removeCookie(LoginService.sessionIdName); // cookie 登录未成功，证明该 cookie 已经没有用处，删之
 			}

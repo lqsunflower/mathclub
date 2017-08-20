@@ -17,12 +17,12 @@ public abstract class BaseSession<M extends BaseSession<M>> extends Model<M> imp
 		return get("id");
 	}
 
-	public void setAccountId(java.lang.Integer accountId) {
-		set("accountId", accountId);
+	public void setUserId(java.lang.Integer userId) {
+		set("userId", userId);
 	}
 
-	public java.lang.Integer getAccountId() {
-		return get("accountId");
+	public java.lang.Integer getUserId() {
+		return get("userId");
 	}
 
 	public void setExpireAt(java.lang.Long expireAt) {

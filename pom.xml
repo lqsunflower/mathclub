@@ -103,11 +103,45 @@
 			<artifactId>jetty-server</artifactId>
 			<version>8.1.8</version>
 			<scope>provided</scope>
-			<!-- <exclusions> <exclusion> <artifactId>jetty-server</artifactId> <groupId>org.eclipse.jetty</groupId> 
-				</exclusion> </exclusions> -->
+			<!-- <exclusions>
+				<exclusion>
+					<artifactId>jetty-server</artifactId>
+					<groupId>org.eclipse.jetty</groupId>
+				</exclusion>
+			</exclusions> -->
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.6.11</version>
+		</dependency>
+
 	</dependencies>
+
 	<build>
+		<plugins>
+			<!-- 官方文档 -->
+			<!-- http://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-source-and-target.html -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<!-- 指定source和target的版本 -->
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
 		<finalName>mathclub</finalName>
 	</build>
+
 </project>

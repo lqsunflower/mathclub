@@ -13,8 +13,11 @@ import com.jfinal.core.JFinal;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.druid.DruidPlugin;
+import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Engine;
 import com.mathclub.controller.AdminController;
+import com.mathclub.controller.KeyController;
+import com.mathclub.controller.MajorController;
 import com.mathclub.controller.MsgController;
 import com.mathclub.controller.OauthWeixinController;
 import com.mathclub.controller.SubjectController;
@@ -22,6 +25,7 @@ import com.mathclub.controller.UploadController;
 import com.mathclub.model.KeyPoint;
 import com.mathclub.model.Like;
 import com.mathclub.model.Major;
+import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
 import com.mathclub.model.User;
 
@@ -71,6 +75,9 @@ public class MathClubConfig extends JFinalConfig {
 		me.add("/admin", AdminController.class);
 		me.add("/subject", SubjectController.class);
 		me.add("/upload", UploadController.class);
+		me.add("/math", MajorController.class);
+		me.add("/kk", KeyController.class);
+		
 	}
 
 	/*
@@ -94,9 +101,12 @@ public class MathClubConfig extends JFinalConfig {
 		me.add(arp);
 		arp.addMapping("user", "userId", User.class);
 		arp.addMapping("major", "majorId", Major.class);
-		arp.addMapping("keyPoint", "keyId", KeyPoint.class);
+		arp.addMapping("keypoint", "keyId", KeyPoint.class);
 		arp.addMapping("subject", "subjectId", Subject.class);
 		arp.addMapping("subject_like", "userId", Like.class);
+		arp.addMapping("session", "id", Session.class);
+		
+		me.add(new EhCachePlugin());//配置缓存插件
 	}
 
 	/*

@@ -4,16 +4,17 @@
 package com.mathclub.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.json.JsonManager;
-import com.jfinal.json.MixedJsonFactory;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.model.Like;
 import com.mathclub.model.Subject;
 import com.mathclub.model.SubjectVo;
@@ -24,10 +25,44 @@ import com.mathclub.model.SubjectVo;
  */
 public class SubjectService {
 
+	private static Logger log = Logger.getLogger(SubjectService.class);
 	public static final Subject subjectDao = new Subject().dao();
 	private static final Like likeDao = new Like().dao();
-	private static Logger log = Logger.getLogger(SubjectService.class);
+
 	final int pageSize = 1;
+
+	public Ret addSubject(Subject param) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("name", param.getName());
+		map.put("majorId", param.getMajorId());
+		map.put("pic", param.getPic());
+		map.put("apic", param.getApic());
+		map.put("hide", param.getHide());
+		map.put("answer", param.getAnswer());
+		map.put("answerNum", param.getAnswerNum());
+		map.put("hint", param.getHint());
+		map.put("author", param.getAuthor());
+		map.put("tags", param.getTags());
+		map.put("createTime", new Date());
+		Record record = new Record().setColumns(map);
+		boolean result = Db.save("subject", "subjectId", record);
+		if (result) {
+			log.info("succeed to add subject.name=" + param.getName());
+			return Ret.ok("subjectId", record.get("subjectId"));
+		} else {
+			log.error("failed to add subject.name=" + param.getName());
+			return Ret.fail("msg", "操作数据库失败");
+		}
+
+	}
+
+	public Page<Subject> getSubjectListByKeyId(int keyId) {
+		return subjectDao.paginate(2, 1, "select *", "from subject where keyId=? order by createTime desc", keyId);
+	}
+
+	/*public Subject getSubjectInfo(Integer subjectId, Integer keyId) {
+		return subjectDao.findFirst("select * from subject where subjectId=? and keyId=?", subjectId, keyId);
+	}*/
 
 	/**
 	 * 检查用户是否已点赞或点跪
@@ -122,6 +157,7 @@ public class SubjectService {
 
 	/**
 	 * 分页查询
+	 * 
 	 * @param userId
 	 * @param keyId
 	 * @param pageNum
@@ -135,7 +171,7 @@ public class SubjectService {
 		if (list == null || list.size() == 0) {
 			return Ret.fail("msg", "该知识点没有题目");
 		}
-		SubjectVo subVo =JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
+		SubjectVo subVo = JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
 		System.out.println("subjet0000 " + subVo.getName() + "kkk=" + subVo.getTags());
 		// 根据题目id查询点赞人数和点跪人数，并且查询是否点赞或者点跪
 		int likeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 1",
@@ -167,7 +203,7 @@ public class SubjectService {
 		} else {
 			subVo.setFavorite(false);
 		}
-		return Ret.create("state","ok").set("subject",subVo).set("page", 1);
+		return Ret.create("state", "ok").set("subject", subVo).set("page", 1);
 	}
 
 	/**
@@ -177,5 +213,28 @@ public class SubjectService {
 		String select = "select *";
 		String sql = "from subject where keyId = ? order by createTime desc";
 		return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
+	}
+
+	public Ret update(Subject param) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("subjectId", param.getSubjectId());
+		map.put("name", param.getName());
+		map.put("majorId", param.getMajorId());
+		map.put("pic", param.getPic());
+		map.put("apic", param.getApic());
+		map.put("hide", param.getHide());
+		map.put("answer", param.getAnswer());
+		map.put("answerNum", param.getAnswerNum());
+		map.put("hint", param.getHint());
+		map.put("author", param.getAuthor());
+		map.put("tags", param.getTags());
+		map.put("createTime", new Date());
+		Record record = new Record().setColumns(map);
+		boolean ret = Db.update("subject", "subjectId", record);
+		if (ret) {
+			return Ret.ok("msg", "更新题目成功");
+		} else {
+			return Ret.fail("msg", "更新题目失败");
+		}
 	}
 }

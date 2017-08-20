@@ -1,15 +1,3 @@
-/**
-* 文件名：RedirectUtil.java
-* 创建日期： 2016年9月1日
-* 作者：     wangjin
-* Copyright (c) 2009-2016 彩讯科技.邮箱开发室
-* All rights reserved.
- 
-* 修改记录：
-* 	1.修改时间：2016年9月1日
-* 	修改人：wangjin
-* 	修改内容：
-*/
 package com.mathclub.common;
 
 import javax.servlet.http.HttpServletResponse;

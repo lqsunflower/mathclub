@@ -6,6 +6,7 @@ import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
 import com.mathclub.kit.IpKit;
+import com.mathclub.model.Session;
 
 /**
  * 登录控制器
@@ -13,7 +14,7 @@ import com.mathclub.kit.IpKit;
 public class LoginController extends Controller {
 
 	static final LoginService srv = LoginService.me;
-
+	
 	/**
 	 * 显示登录界面
 	 */
@@ -25,18 +26,9 @@ public class LoginController extends Controller {
 	/**
 	 * 登录
 	 */
-	@Before(LoginValidator.class)
-	public void doLogin() {
-		boolean keepLogin = getParaToBoolean("keepLogin", false);
-		String loginIp = IpKit.getRealIp(getRequest());
-		Ret ret = srv.login(getPara("openid"), keepLogin, loginIp);
-		if (ret.isOk()) {
-			String sessionId = ret.getStr(LoginService.sessionIdName);
-			int maxAgeInSeconds = ret.getInt("maxAgeInSeconds");
-			setCookie(LoginService.sessionIdName, sessionId, maxAgeInSeconds, true);
-			setAttr(LoginService.loginAccountCacheName, ret.get(LoginService.loginAccountCacheName));
-		}
-		renderJson(ret);
+	//@Before(LoginValidator.class)
+	public Ret doLogin(String openId,String loginIp) {
+		return srv.login(openId, false, loginIp);
 	}
 
 	/**
@@ -53,5 +45,7 @@ public class LoginController extends Controller {
 	public void captcha() {
 		renderCaptcha();
 	}
+	
+
 }
 
