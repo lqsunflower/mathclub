@@ -55,59 +55,55 @@ public class SubjectAdminController extends BaseController {
 		String tags = param.getTags();
 		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.getAnswer());
 
-		if (param.getSubjectId() == 0 || StrKit.isBlank(param.getName())
-				|| StrKit.isBlank(param.getAnswer()) || StrKit.isBlank(param.getPic())) {
+		if (param.getSubjectId() == 0 || StrKit.isBlank(param.getName()) || StrKit.isBlank(param.getAnswer())
+				|| StrKit.isBlank(param.getPic())) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
 		renderJson(subjectService.update(param));
 	}
-	
-	/**
-     * (后台管理)删除题目
-     */
-    @ActionKey("/subject:delete")
-    public void deleteSubject() {
-        String subjectId = getPara("subjectId");
-        log.info("subjectId=" + subjectId);
-        if (StrKit.isBlank(subjectId)|| getParaToInt("subjectId") == 0) {
-            renderJson(Ret.fail("msg", "请求参数错误"));
-            return;
-        }
-        renderJson(subjectService.delete(getParaToInt("subjectId")));
-    }
 
-	 
-    
-    /**
-     * (后台管理)根据题目ID获取题目信息
-     */
-    @ActionKey("/subject:findById")
-    public void getSubjectInfoById() {
-        log.info("get subject info request subjectId =" + getParaToInt("subjectId"));
-        Subject subject = subjectService.getSubjectInfoById(getParaToInt("subjectId"));
-        if(subject != null){
-            renderJson(Ret.ok("sub", subject));
-        }
-    }
-    
-    
-    /**
-     * (后台管理)分页查询题目根据知识点ID
-     * 给后台管理页面的接口
-     */
-    @ActionKey("/subject:list")
-    public void getSubjectListByPage() {
-        log.info("get subject list request majorId =" + getParaToInt("keyId"));
-        Page<Subject> subjectList = subjectService.getSubjectByPage(getParaToInt("keyId"),getParaToInt("p"),getParaToInt("size"));
-        if(subjectList != null){
-            System.out.println("subjectList pa" + subjectList.getPageNumber());
-            System.out.println("subjectList pa" + subjectList.getTotalPage());
-            System.out.println("subjectList pa" + subjectList.getTotalRow());
-            renderJson(Ret.ok("list", subjectList));
-        }else{
-            renderJson(Ret.ok("msg","没有题目信息"));
-        }
-    }
-    
+	/**
+	 * (后台管理)删除题目
+	 */
+	@ActionKey("/subject:delete")
+	public void deleteSubject() {
+		String subjectId = getPara("subjectId");
+		log.info("subjectId=" + subjectId);
+		if (StrKit.isBlank(subjectId) || getParaToInt("subjectId") == 0) {
+			renderJson(Ret.fail("msg", "请求参数错误"));
+			return;
+		}
+		renderJson(subjectService.delete(getParaToInt("subjectId")));
+	}
+
+	/**
+	 * (后台管理)根据题目ID获取题目信息
+	 */
+	@ActionKey("/subject:findById")
+	public void getSubjectInfoById() {
+		log.info("get subject info request subjectId =" + getParaToInt("subjectId"));
+		Subject subject = subjectService.getSubjectInfoById(getParaToInt("subjectId"));
+		if (subject != null) {
+			renderJson(Ret.ok("sub", subject));
+		}else{
+			renderJson(Ret.fail("msg", "没有该题目"));
+		}
+	}
+
+	/**
+	 * (后台管理)分页查询题目根据知识点ID 给后台管理页面的接口
+	 */
+	@ActionKey("/subject:list")
+	public void getSubjectListByPage() {
+		log.info("get subject list request majorId =" + getParaToInt("keyId"));
+		Page<Subject> subjectList = subjectService.getSubjectByPage(getParaToInt("keyId"), getParaToInt("p"),
+				getParaToInt("s"));
+		if (subjectList != null && subjectList.getTotalPage() != 0) {
+			renderJson(Ret.ok("list", subjectList));
+		} else {
+			renderJson(Ret.ok("msg", "没有题目信息"));
+		}
+	}
+
 }

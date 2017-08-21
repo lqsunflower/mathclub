@@ -5,6 +5,7 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.upload.UploadFile;
 import com.mathclub.model.Account;
+import com.mathclub.model.User;
 import com.mathclub.service.UploadService;
 
 /**
@@ -14,7 +15,7 @@ public class UploadController extends BaseController {
 
 	static UploadService srv = UploadService.me;
 
-	Account account = new Account();
+	User user = new User();
 	/**
 	 * 接管 ueditor 上传图片服务端
 	 *
@@ -63,7 +64,7 @@ public class UploadController extends BaseController {
 		try {
 			// "upfile" 来自 config.json 中的 imageFieldName 配置项
 			uploadFile = getFile("file", UploadService.uploadTempPath, UploadService.imageMaxSize);
-			Ret ret = srv.uploadFile(account, uploadType, uploadFile);
+			Ret ret = srv.uploadFile(user, uploadType, uploadFile);
 			renderJson(ret);
 		}
 		catch(com.jfinal.upload.ExceededSizeException ex) {

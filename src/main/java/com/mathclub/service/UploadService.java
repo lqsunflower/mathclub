@@ -22,6 +22,8 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.upload.UploadFile;
 import com.mathclub.kit.ImageKit;
 import com.mathclub.model.Account;
+import com.mathclub.model.User;
+
 import org.joda.time.DateTime;
 
 /**
@@ -59,7 +61,7 @@ public class UploadService {
 	/**
 	 * 上传业务方法
 	 */
-	public Ret uploadFile(Account user, String uploadType, UploadFile uf) {
+	public Ret uploadFile(User user, String uploadType, UploadFile uf) {
 		Ret ret = checkUeditorUploadFile(uf);
 		if (ret != null) {
 			return ret;
@@ -74,7 +76,7 @@ public class UploadService {
 		String[] absolutePathFileName = new String[1];
 		// 生成的文件名
 		String[] fileName = new String[1];
-		buildPathAndFileName(uploadType, user.getAccountId(), extName, relativePathFileName, absolutePathFileName,
+		buildPathAndFileName(uploadType, user.getUserId(), extName, relativePathFileName, absolutePathFileName,
 				fileName);
 		saveOriginalFileToTargetFile(uf.getFile(), absolutePathFileName[0]);
 
@@ -90,8 +92,8 @@ public class UploadService {
 		 * "url": "/ueditor/jsp/upload/image/20160604/1465008328293017063.png",
 		 * "size": "185984" }
 		 */
-		return Ret.create("state", "SUCCESS").set("url", relativePathFileName[0]).set("title", fileName[0])
-				.set("original", uf.getOriginalFileName()).set("type", extName).set("size", fileSize);
+		return Ret.create("state", "ok").set("url", relativePathFileName[0]).set("title", fileName[0])
+				.set("original", uf.getOriginalFileName()).set("type", extName).set("size", fileSize).set("aurl", absolutePathFileName[0]);
 	}
 
 	/**
@@ -125,7 +127,9 @@ public class UploadService {
 		fileName[0] = generateFileName(accountId, extName);
 		relativePathFileName[0] = relativePath + fileName[0];
 
-		String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
+		//String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
+		String absolutePath = "F:/" + relativePath;
+		
 		System.out.println("absolutePath="  + absolutePath);
 		System.out.println("relativePath="  + relativePath);
 		File temp = new File(absolutePath);
