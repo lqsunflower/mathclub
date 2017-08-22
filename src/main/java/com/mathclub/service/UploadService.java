@@ -127,11 +127,8 @@ public class UploadService {
 		fileName[0] = generateFileName(accountId, extName);
 		relativePathFileName[0] = relativePath + fileName[0];
 
-		//String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
-		String absolutePath = "F:/" + relativePath;
-		
-		System.out.println("absolutePath="  + absolutePath);
-		System.out.println("relativePath="  + relativePath);
+		String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
+		//String absolutePath = "F:/" + relativePath;
 		File temp = new File(absolutePath);
 		if (!temp.exists()) {
 			temp.mkdirs(); // 如果目录不存在则创建
