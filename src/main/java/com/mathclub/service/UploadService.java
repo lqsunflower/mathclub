@@ -15,6 +15,8 @@
 package com.mathclub.service;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
@@ -27,8 +29,7 @@ import com.mathclub.model.User;
 import org.joda.time.DateTime;
 
 /**
- * 上传业务 1：不同模块分别保存到不同子目录 
- * 2：每个目录下文件数达到 5000 时创建新的子目录，upload_counter
+ * 上传业务 1：不同模块分别保存到不同子目录 2：每个目录下文件数达到 5000 时创建新的子目录，upload_counter
  * 用于记录每个模块文件上传总数 用于创建子目录
  * 
  * @param <Account>
@@ -40,7 +41,7 @@ public class UploadService {
 	/**
 	 * 上传图片允许的最大尺寸，目前只允许 5M
 	 */
-	public static final int imageMaxSize = 5 *1024 * 1024;
+	public static final int imageMaxSize = 5 * 1024 * 1024;
 
 	/**
 	 * 上传图片临时目录，相对于 baseUploadPath 的路径，是否以 "/" 并无影响 本项目的 baseUploadLoad 为
@@ -52,6 +53,10 @@ public class UploadService {
 	 * 相对于 webRootPath 之后的目录，与"/upload" 是与 baseUploadPath 重合的部分
 	 */
 	private static final String basePath = "/upload/img/";
+	/**
+	 * 视频文件的目录，相对于 webRootPath 之后的目录
+	 */
+	private static final String videoBasePath = "/upload/video/";
 
 	/**
 	 * 每个子目录允许存 5000 个文件
@@ -84,16 +89,19 @@ public class UploadService {
 		updateUploadCounter(uploadType);
 
 		/**
-		 * ueditor 要求的返回格式： 
-		 * {"state": "SUCCESS", 
-		 * "title":	"1465008328293017063.png", 
-		 * "original": "2222.png", 
-		 * "type": ".png",
+		 * ueditor 要求的返回格式： {"state": "SUCCESS", "title":
+		 * "1465008328293017063.png", "original": "2222.png", "type": ".png",
 		 * "url": "/ueditor/jsp/upload/image/20160604/1465008328293017063.png",
 		 * "size": "185984" }
 		 */
-		return Ret.create("state", "ok").set("url", relativePathFileName[0]).set("title", fileName[0])
-				.set("original", uf.getOriginalFileName()).set("type", extName).set("size", fileSize).set("aurl", absolutePathFileName[0]);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("url", relativePathFileName[0]);
+		map.put("title", fileName[0]);
+		map.put("original", uf.getOriginalFileName());
+		map.put("type", extName);
+		map.put("size", fileSize);
+		map.put("aurl", absolutePathFileName[0]);
+		return Ret.create("state", "ok").set("data", map);
 	}
 
 	/**
@@ -127,8 +135,9 @@ public class UploadService {
 		fileName[0] = generateFileName(accountId, extName);
 		relativePathFileName[0] = relativePath + fileName[0];
 
-		String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
-		//String absolutePath = "F:/" + relativePath;
+		String absolutePath = PathKit.getWebRootPath() + relativePath; // webRootPath
+																		// 将来要根据baseUploadPath调整，改代码，暂时选先这样用着，着急上线
+		// String absolutePath = "F:/" + relativePath;
 		File temp = new File(absolutePath);
 		if (!temp.exists()) {
 			temp.mkdirs(); // 如果目录不存在则创建
@@ -167,5 +176,41 @@ public class UploadService {
 			return Ret.create("state", "图片尺寸只允许 5M 大小");
 		}
 		return null;
+	}
+	
+	
+	
+	/**
+	 * 上传视频业务方法
+	 */
+	public Ret uploadVideoFile(User user, String uploadType, UploadFile uf) {
+		/*Ret ret = checkUeditorUploadFile(uf);
+		if (ret != null) {
+			return ret;
+		}*/
+		String fileSize = uf.getFile().length() + "";
+		String extName = "." + ImageKit.getExtName(uf.getFileName());// 获取后缀名
+
+		// 相对路径 + 文件名：用于返回 要求的 url 字段值，形如："/upload/img/project/0/123.jpg
+		String[] relativePathFileName = new String[1];
+		// 绝对路径 + 文件名：用于保存到文件系统
+		String[] absolutePathFileName = new String[1];
+		// 生成的文件名
+		String[] fileName = new String[1];
+		buildPathAndFileName(uploadType, user.getUserId(), extName, relativePathFileName, absolutePathFileName,
+				fileName);
+		saveOriginalFileToTargetFile(uf.getFile(), absolutePathFileName[0]);
+
+		// 更新 upload_counter 表的 counter 字段值
+		updateUploadCounter(uploadType);
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("url", relativePathFileName[0]);
+		map.put("title", fileName[0]);
+		map.put("original", uf.getOriginalFileName());
+		map.put("type", extName);
+		map.put("size", fileSize);
+		map.put("aurl", absolutePathFileName[0]);
+		return Ret.create("state", "ok").set("data", map);
 	}
 }

@@ -38,8 +38,8 @@ public class UploadController extends BaseController {
 	 *    {"state": "错误信息"}
 	 *
 	 */
-	@ActionKey("/uploadFile")
-	public void upload() {
+	@ActionKey("/upload:image")
+	public void uploadImage() {
 		
 		/**
 		 * uploadType 是通过如代码令 ueditor 在上传图片时通过问号挂参的方式传递过来的自定义参数
@@ -54,7 +54,7 @@ public class UploadController extends BaseController {
 			renderJson("state", "上传类型参数缺失");
 			return ;
 		}*/
-		String uploadType = "subject";
+		String uploadType = "image";
 		/*if (notLogin()) {
 			renderJson("state", "只有登录用户才可以上传文件");
 			return ;
@@ -76,6 +76,34 @@ public class UploadController extends BaseController {
 			}
 			
 			renderJson("state", "上传图片出现未知异常，请告知管理员：" + e.getMessage());
+			LogKit.error(e.getMessage(), e);
+		}
+	}
+	
+	//上传视频文件
+	@ActionKey("/upload:video")
+	public void uploadVideo() {
+		String uploadType = "video";
+		/*if (notLogin()) {
+			renderJson("state", "只有登录用户才可以上传文件");
+			return ;
+		}*/
+
+		UploadFile uploadFile = null;
+		try {
+			// "upfile" 来自 config.json 中的 imageFieldName 配置项
+			uploadFile = getFile("file", UploadService.uploadTempPath, UploadService.imageMaxSize);
+			Ret ret = srv.uploadVideoFile(user, uploadType, uploadFile);
+			renderJson(ret);
+		}
+		catch(com.jfinal.upload.ExceededSizeException ex) {
+			renderJson("state", "上传视频只允许 5M 大小");
+		}
+		catch(Exception e) {
+			if (uploadFile != null) {
+				uploadFile.getFile().delete();
+			}
+			renderJson("state", "上传视频出现未知异常，请告知管理员：" + e.getMessage());
 			LogKit.error(e.getMessage(), e);
 		}
 	}
