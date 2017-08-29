@@ -28,6 +28,7 @@ import com.mathclub.model.Like;
 import com.mathclub.model.Major;
 import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
+import com.mathclub.model.TestSubject;
 import com.mathclub.model.User;
 
 /**
@@ -107,6 +108,7 @@ public class MathClubConfig extends JFinalConfig {
 		arp.addMapping("subject", "subjectId", Subject.class);
 		arp.addMapping("subject_like", "userId", Like.class);
 		arp.addMapping("session", "id", Session.class);
+		arp.addMapping("test", "id", TestSubject.class);
 		
 		me.add(new EhCachePlugin());//配置缓存插件
 	}

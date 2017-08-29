@@ -68,7 +68,7 @@ public class UploadController extends BaseController {
 			renderJson(ret);
 		}
 		catch(com.jfinal.upload.ExceededSizeException ex) {
-			renderJson("state", "上传图片只允许 5M 大小");
+			renderJson(Ret.fail("msg", "上传图片只允许 5M 大小"));
 		}
 		catch(Exception e) {
 			if (uploadFile != null) {
