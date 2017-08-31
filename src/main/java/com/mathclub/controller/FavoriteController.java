@@ -34,24 +34,24 @@ public class FavoriteController extends BaseController {
     /**
      * 个人空间首页的收藏列表
      */
-    public void index() {
+   /* public void index() {
         int userId=0;
         List<Favorite> favoriteList = srv.findAll(userId);
         setAttr("favoriteList", favoriteList);
         render("index.html");
-    }
+    }*/
 
     /**
      * 个人空间根据 id 删除收藏
-     */
+     *//*
     public void delete() {
         srv.deleteByFavoriteId(getLoginAccountId(), getParaToInt("id"));
         redirect("/my/favorite");
     }
 
-    /**
+    *//**
      * 用于 article detail 页面添加/取消收藏功能
-     */
+     *//*
     @ActionKey("/favorite")
     @Clear({FrontAuthInterceptor.class, FriendInterceptor.class, LikeInterceptor.class})
     public void favorite() {
@@ -62,5 +62,5 @@ public class FavoriteController extends BaseController {
 
         Ret ret = srv.favorite(getLoginAccountId(), getPara("refType"), getParaToInt("refId"), getParaToBoolean("isAdd"));
         renderJson(ret);
-    }
+    }*/
 }

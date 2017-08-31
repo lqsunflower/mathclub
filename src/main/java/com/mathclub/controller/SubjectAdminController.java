@@ -7,12 +7,16 @@
  */
 package com.mathclub.controller;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
+import com.mathclub.kit.StringKit;
 import com.mathclub.model.Subject;
 import com.mathclub.service.SubjectService;
 
@@ -31,13 +35,19 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:add")
 	public void addSubject() {
-		Subject param = getBean(Subject.class, "");
-		String name = param.getName();
-		int majorId = param.getMajorId();
-		String tags = param.getTags();
-		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.getAnswer());
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String name = param.get("name");
+		String majorId = param.get("majorId");
+		String tags = param.get("tags");
+		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
 
-		if (StrKit.isBlank(param.getName()) || StrKit.isBlank(param.getAnswer()) || StrKit.isBlank(param.getPic())) {
+		if (StrKit.isBlank(name) || StrKit.isBlank(param.get("answer")) || StrKit.isBlank(param.get("pic"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -49,14 +59,20 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:update")
 	public void updateSubject() {
-		Subject param = getBean(Subject.class, "");
-		String name = param.getName();
-		int majorId = param.getMajorId();
-		String tags = param.getTags();
-		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.getAnswer());
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String name = param.get("name");
+		String majorId = param.get("majorId");
+		String tags = param.get("tags");
+		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
 
-		if (param.getSubjectId() == 0 || StrKit.isBlank(param.getName()) || StrKit.isBlank(param.getAnswer())
-				|| StrKit.isBlank(param.getPic())) {
+		if (Integer.valueOf(param.get("subjectId")) == 0 || StrKit.isBlank(name)
+				|| StrKit.isBlank(param.get("answer"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -68,9 +84,18 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:delete")
 	public void deleteSubject() {
-		String subjectId = getPara("subjectId");
+
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String subjectId = param.get("subjectId");
+
 		log.info("subjectId=" + subjectId);
-		if (StrKit.isBlank(subjectId) || getParaToInt("subjectId") == 0) {
+		if (StrKit.isBlank(subjectId) || Integer.valueOf(subjectId) == 0) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;
 		}
@@ -82,11 +107,21 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:findById")
 	public void getSubjectInfoById() {
-		log.info("get subject info request subjectId =" + getParaToInt("subjectId"));
-		Subject subject = subjectService.getSubjectInfoById(getParaToInt("subjectId"));
+
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String subjectId = param.get("subjectId");
+
+		log.info("get subject info request subjectId =" + subjectId);
+		Subject subject = subjectService.getSubjectInfoById(Integer.valueOf(subjectId));
 		if (subject != null) {
 			renderJson(Ret.ok("sub", subject));
-		}else{
+		} else {
 			renderJson(Ret.fail("msg", "没有该题目"));
 		}
 	}
@@ -96,9 +131,18 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:list")
 	public void getSubjectListByPage() {
-		log.info("get subject list request majorId =" + getParaToInt("keyId"));
-		Page<Subject> subjectList = subjectService.getSubjectByPage(getParaToInt("keyId"), getParaToInt("p"),
-				getParaToInt("s"));
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String keyId = param.get("keyId");
+		String page = param.get("page");
+		String size = param.get("size");
+		Page<Subject> subjectList = subjectService.getSubjectByPage(Integer.valueOf(keyId), Integer.valueOf(page),
+				Integer.valueOf(size));
 		if (subjectList != null && subjectList.getTotalPage() != 0) {
 			renderJson(Ret.ok("list", subjectList));
 		} else {

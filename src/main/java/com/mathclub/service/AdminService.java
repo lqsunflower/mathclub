@@ -24,7 +24,7 @@ public class AdminService {
 	private static Logger log = Logger.getLogger(AdminService.class);
 	public static final Subject subjectDao = new Subject().dao();
 
-	JsonKit.toJson(record);
+	//JsonKit.toJson(record);
 	
 
 }

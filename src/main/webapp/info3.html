@@ -1,0 +1,18 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<html >
+<head>
+<title>文件上传方法</title>
+</head>
+<body>
+	<button id="button">tijiao</button>
+	<script>
+		var submit = function () {
+			var formData = new FormData()
+			formData.append('name', 'Chris');
+			var xhr = new XMLHttpRequest()
+			xhr.open("post", 'http://localhost/math:addMajor')
+			xhr.send('name=test&XXX=123')
+		}
+	</script>
+</body>
+</html>

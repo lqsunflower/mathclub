@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2017-08-20 23:57:52
+Date: 2017-09-01 00:36:24
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -49,6 +49,7 @@ CREATE TABLE `login_log` (
 -- ----------------------------
 -- Records of login_log
 -- ----------------------------
+INSERT INTO `login_log` VALUES ('8', '2017-08-29 23:51:39', '127.0.0.1');
 
 -- ----------------------------
 -- Table structure for `major`
@@ -58,7 +59,7 @@ CREATE TABLE `major` (
   `majorId` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`majorId`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of major
@@ -68,6 +69,7 @@ INSERT INTO `major` VALUES ('5', '线性代数');
 INSERT INTO `major` VALUES ('6', '学科测试');
 INSERT INTO `major` VALUES ('7', '学科测试3');
 INSERT INTO `major` VALUES ('8', '哈哈哈哈');
+INSERT INTO `major` VALUES ('9', 'test');
 
 -- ----------------------------
 -- Table structure for `session`
@@ -84,6 +86,7 @@ CREATE TABLE `session` (
 -- Records of session
 -- ----------------------------
 INSERT INTO `session` VALUES ('781100a1d63143d790d130d945e1049e', '8', '1503227120096');
+INSERT INTO `session` VALUES ('9b9ca4622a5a431288c19edec7cdfde7', '8', '1504029099072');
 
 -- ----------------------------
 -- Table structure for `subject`
@@ -104,12 +107,16 @@ CREATE TABLE `subject` (
   `tags` varchar(255) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`subjectId`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of subject
 -- ----------------------------
-INSERT INTO `subject` VALUES ('8', null, '8', '更新', 'kkk', null, null, '哈哈哈', '0', null, null, '1,2,3', '2017-08-20 23:50:55');
+INSERT INTO `subject` VALUES ('8', '3', '8', '更新', 'kkk', null, null, '哈哈哈', '0', null, null, '1,2,3', '2017-08-20 23:50:55');
+INSERT INTO `subject` VALUES ('9', '3', '2', '学科', 's', 'd', 's', 's', '3', '3', null, null, null);
+INSERT INTO `subject` VALUES ('10', '2', '3', '科目', '的', null, null, null, null, null, null, null, null);
+INSERT INTO `subject` VALUES ('11', null, '99', '哈哈哈李邱', '000', null, null, 'xxxx', '0', null, null, null, '2017-08-31 23:14:29');
+INSERT INTO `subject` VALUES ('12', null, '99', '哈哈李邱7777', '000', null, null, 'xxxx', null, null, null, null, '2017-08-31 23:34:29');
 
 -- ----------------------------
 -- Table structure for `subject_like`
@@ -131,6 +138,26 @@ INSERT INTO `subject_like` VALUES ('2', '2', '1', '2017-08-10 23:05:24');
 INSERT INTO `subject_like` VALUES ('3', '2', '1', '2017-08-10 23:15:23');
 
 -- ----------------------------
+-- Table structure for `test`
+-- ----------------------------
+DROP TABLE IF EXISTS `test`;
+CREATE TABLE `test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `majorId` int(11) DEFAULT NULL,
+  `name` varchar(64) DEFAULT NULL,
+  `subjectIds` varchar(128) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `modifyTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of test
+-- ----------------------------
+INSERT INTO `test` VALUES ('1', '2', 'test1', '2,4,3', '2017-08-30 22:46:35', null);
+INSERT INTO `test` VALUES ('2', '2', 'test333', '2,4,3', '2017-08-30 23:06:47', '2017-08-30 23:06:47');
+
+-- ----------------------------
 -- Table structure for `upload_counter`
 -- ----------------------------
 DROP TABLE IF EXISTS `upload_counter`;
@@ -144,7 +171,8 @@ CREATE TABLE `upload_counter` (
 -- ----------------------------
 -- Records of upload_counter
 -- ----------------------------
-INSERT INTO `upload_counter` VALUES ('subject', '2', 'shangc');
+INSERT INTO `upload_counter` VALUES ('image', '6', '图片文件');
+INSERT INTO `upload_counter` VALUES ('video', '1', '视频文件');
 
 -- ----------------------------
 -- Table structure for `user`

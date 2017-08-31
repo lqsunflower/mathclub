@@ -31,26 +31,28 @@ public class SubjectService {
 
 	final int pageSize = 1;
 
-	public Ret addSubject(Subject param) {
+	public Ret addSubject(Map<String, String> param) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("name", param.getName());
-		map.put("majorId", param.getMajorId());
-		map.put("pic", param.getPic());
-		map.put("apic", param.getApic());
-		map.put("hide", param.getHide());
-		map.put("answer", param.getAnswer());
-		map.put("answerNum", param.getAnswerNum());
-		map.put("hint", param.getHint());
-		map.put("author", param.getAuthor());
-		map.put("tags", param.getTags());
+		map.put("name", param.get("name"));
+		map.put("majorId", param.get("majorId"));
+		map.put("pic", param.get("pic"));
+		map.put("apic", param.get("apic"));
+		map.put("hide", param.get("hide"));
+		map.put("answer", param.get("answer"));
+		map.put("answerNum", param.get("answerNum"));
+		map.put("hint", param.get("hint"));
+		map.put("author", param.get("author"));
+		map.put("tags", param.get("tags"));
 		map.put("createTime", new Date());
 		Record record = new Record().setColumns(map);
 		boolean result = Db.save("subject", "subjectId", record);
 		if (result) {
-			log.info("succeed to add subject.name=" + param.getName());
-			return Ret.ok("subjectId", record.get("subjectId"));
+			log.info("succeed to add subject.name=" + param.get("name"));
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("subjectId", record.get("subjectId"));
+			return Ret.ok("data", data);
 		} else {
-			log.error("failed to add subject.name=" + param.getName());
+			log.error("failed to add subject.name=" + param.get("name"));
 			return Ret.fail("msg", "操作数据库失败");
 		}
 
@@ -208,7 +210,7 @@ public class SubjectService {
 		} else {
 			subVo.setFavorite(false);
 		}
-		return Ret.create("state", "ok").set("sub", subVo);
+		return Ret.create("state", "ok").set("data", subVo);
 	}
 
 	/**
@@ -220,19 +222,19 @@ public class SubjectService {
 		return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
 	}
 
-	public Ret update(Subject param) {
+	public Ret update(Map<String, String> param) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("subjectId", param.getSubjectId());
-		map.put("name", param.getName());
-		map.put("majorId", param.getMajorId());
-		map.put("pic", param.getPic());
-		map.put("apic", param.getApic());
-		map.put("hide", param.getHide());
-		map.put("answer", param.getAnswer());
-		map.put("answerNum", param.getAnswerNum());
-		map.put("hint", param.getHint());
-		map.put("author", param.getAuthor());
-		map.put("tags", param.getTags());
+		map.put("subjectId", param.get("subjectId"));
+		map.put("name", param.get("name"));
+		map.put("majorId", param.get("majorId"));
+		map.put("pic", param.get("pic"));
+		map.put("apic", param.get("apic"));
+		map.put("hide", param.get("hide"));
+		map.put("answer", param.get("answer"));
+		map.put("answerNum", param.get("answerNum"));
+		map.put("hint", param.get("hint"));
+		map.put("author", param.get("author"));
+		map.put("tags", param.get("tags"));
 		map.put("createTime", new Date());
 		Record record = new Record().setColumns(map);
 		boolean ret = Db.update("subject", "subjectId", record);

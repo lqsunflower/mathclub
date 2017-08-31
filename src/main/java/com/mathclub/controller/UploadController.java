@@ -74,8 +74,7 @@ public class UploadController extends BaseController {
 			if (uploadFile != null) {
 				uploadFile.getFile().delete();
 			}
-			
-			renderJson("state", "上传图片出现未知异常，请告知管理员：" + e.getMessage());
+			renderJson(Ret.fail("msg", "上传图片出现未知异常，请告知管理员："));
 			LogKit.error(e.getMessage(), e);
 		}
 	}
@@ -97,13 +96,13 @@ public class UploadController extends BaseController {
 			renderJson(ret);
 		}
 		catch(com.jfinal.upload.ExceededSizeException ex) {
-			renderJson("state", "上传视频只允许 5M 大小");
+			renderJson(Ret.fail("msg", "上传视频只允许 5M 大小"));
 		}
 		catch(Exception e) {
 			if (uploadFile != null) {
 				uploadFile.getFile().delete();
 			}
-			renderJson("state", "上传视频出现未知异常，请告知管理员：" + e.getMessage());
+			renderJson(Ret.fail("msg", "上传视频出现未知异常，请告知管理员："));
 			LogKit.error(e.getMessage(), e);
 		}
 	}

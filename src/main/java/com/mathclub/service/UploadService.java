@@ -97,7 +97,7 @@ public class UploadService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("url", relativePathFileName[0]);
 		map.put("title", fileName[0]);
-		map.put("original", uf.getOriginalFileName());
+		map.put("fileName", uf.getOriginalFileName());
 		map.put("type", extName);
 		map.put("size", fileSize);
 		map.put("aurl", absolutePathFileName[0]);
@@ -207,7 +207,7 @@ public class UploadService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("url", relativePathFileName[0]);
 		map.put("title", fileName[0]);
-		map.put("original", uf.getOriginalFileName());
+		map.put("fileName", uf.getOriginalFileName());
 		map.put("type", extName);
 		map.put("size", fileSize);
 		map.put("aurl", absolutePathFileName[0]);

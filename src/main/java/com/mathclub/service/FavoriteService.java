@@ -18,7 +18,7 @@ public class FavoriteService {
      * @param refId 被收藏的表名中的相应的 id 值
      * @param isAdd true 为收藏，false 为取消收藏，null 需要判断是否已被收藏
      */
-    public Ret favorite(int myId, String refTypeTable, int refId, Boolean isAdd) {
+    /*public Ret favorite(int myId, String refTypeTable, int refId, Boolean isAdd) {
         Favorite.checkRefTypeTable(refTypeTable);
         if (isAdd != null) {
             if (isAdd) {
@@ -45,9 +45,9 @@ public class FavoriteService {
         return Db.queryInt("select accountId from " + refTypeTable + " where id=? limit 1", refId);
     }
 
-    /**
+    *//**
      * 收藏
-     */
+     *//*
     private Ret save(final int myId, final String refTypeTable, final int refId) {
         final Integer userId = getUserIdOfRef(refTypeTable, refId);
         if (userId == null) {
@@ -76,9 +76,9 @@ public class FavoriteService {
         return isOk ? Ret.ok() : Ret.fail("msg", "收藏失败");
     }
 
-    /**
+    *//**
      * 取消收藏
-     */
+     *//*
     private Ret delete(final int myId, final String refTypeTable, final int refId) {
         boolean isOk = Db.tx(new IAtom() {
             public boolean run() throws SQLException {
@@ -92,17 +92,17 @@ public class FavoriteService {
         return isOk ? Ret.ok() : Ret.fail("msg", "取消收藏失败");
     }
 
-    /**
+    *//**
      * 对 refType + refId 指向的资源，是否已收藏
-     */
+     *//*
     public boolean isFavorite(int accountId, int refType, int refId) {
         String sql = "select accountId from favorite where accountId=? and refType=? and refId=? limit 1";
         return Db.queryInt(sql, accountId, refType, refId) != null;
     }
 
-    /**
+    *//**
      * 设置 article detail 页面的收藏状态
-     */
+     *//*
     public void setFavoriteStatus(Account loginAccount, String refTypeTable, Model refObj, Ret ret) {
         if (loginAccount != null) {
             boolean isFavorite = isFavorite(loginAccount.getId(), Favorite.getRefType(refTypeTable), refObj.getInt("id"));
@@ -116,37 +116,37 @@ public class FavoriteService {
         ret.set("favoriteCount", favoriteCount > 0 ? favoriteCount : "");
     }
 
-    /**
+    *//**
      * 删除 project 时，要删除相关的收藏
-     */
+     *//*
     public void deleteByProjectDeleted(int projectId) {
         deleteByRefDeleted(Favorite.REF_TYPE_PROJECT, projectId);
     }
 
-    /**
+    *//**
      * 删除 share 时，要删除相关的收藏
-     */
+     *//*
     public void deleteByShareDeleted(int shareId) {
         deleteByRefDeleted(Favorite.REF_TYPE_SHARE, shareId);
     }
 
-    /**
+    *//**
      * 删除 feedback 时，要删除相关的收藏
-     */
+     *//*
     public void deleteByFeedbackDeleted(int feedbackId) {
         deleteByRefDeleted(Favorite.REF_TYPE_FEEDBACK, feedbackId);
     }
 
-    /**
+    *//**
      * 删除被引用的资源时，要删除相关的收藏
-     */
+     *//*
     private void deleteByRefDeleted(int refType, int refId) {
         Db.update("delete from favorite where refType=? and refId=?", refType, refId);
     }
 
-    /**
+    *//**
      * 通过 favoriteId 删除 favorite 记录，需要检查当前记录的创建者是不是删除者本人
-     */
+     *//*
     public void deleteByFavoriteId(int accountId, int favoriteId) {
         Favorite f = dao.findById(favoriteId);
         if (f != null) {
@@ -154,9 +154,9 @@ public class FavoriteService {
         }
     }
 
-    /**
+    *//**
      * 获取当前用户的收藏列表
-     */
+     *//*
     public List<Favorite> findAll(int userId) {
         List<Favorite> list = dao.find("select * from favorite where userId=? order by id desc", userId);
         loadRef(list);
@@ -179,5 +179,5 @@ public class FavoriteService {
                 f.put("title", m.getStr("title"));
             }
         }
-    }
+    }*/
 }

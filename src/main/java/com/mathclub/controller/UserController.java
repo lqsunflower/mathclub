@@ -1,11 +1,15 @@
 package com.mathclub.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
+import com.mathclub.kit.StringKit;
 import com.mathclub.model.Subject;
 import com.mathclub.service.SubjectService;
 
@@ -33,18 +37,25 @@ public class UserController extends BaseController {
 	 */
 	@ActionKey("/user:like")
 	public void likeSubject() {
-		log.info("like subject info request userId=" + getParaToInt("userId") + " subjectId ="
-				+ getParaToInt("subjectId") + " type=" + getParaToInt("type"));
-		int type = getParaToInt("type");
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		int subjectId = Integer.valueOf(param.get("subjectId"));
+		int userId = Integer.valueOf(param.get("userId"));
+		int type = Integer.valueOf(param.get("type"));
+
 		if (type == 1 || type == 2) {
-			boolean result = subjectService.checkUserExists(getParaToInt("userId"), getParaToInt("subjectId"),
-					getParaToInt("type"));
+			boolean result = subjectService.checkUserExists(userId, subjectId, type);
 			if (result) {
 				renderJson(Ret.fail("msg", "该用户已经点赞或点跪"));
 				return;
 			}
 		}
-		boolean res = subjectService.like(getParaToInt("userId"), getParaToInt("subjectId"), getParaToInt("type"));
+		boolean res = subjectService.like(userId, subjectId, type);
 		if (res) {
 			renderJson(Ret.ok());
 		} else {
@@ -73,12 +84,22 @@ public class UserController extends BaseController {
 	 */
 	@ActionKey("/user:searchByName")
 	public void searchSubjectListByName() {
-		log.info("search subject list request name =" + getPara("name"));
-		List<Subject> subjectList = subjectService.searchSubjectListByName(getPara("name"));
+		
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		String name = param.get("name");
+
+		log.info("search subject list request name =" + name);
+		List<Subject> subjectList = subjectService.searchSubjectListByName(name);
 		if (subjectList != null && subjectList.size() > 0) {
-			renderJson(Ret.create("status", "ok").set("sub", subjectList));
+			renderJson(Ret.create("status", "ok").set("data", subjectList));
 		} else {
-			renderJson(Ret.ok("msg", "没有题目信息"));
+			renderJson(Ret.fail("msg", "没有题目信息"));
 		}
 	}
 

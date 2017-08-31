@@ -1,14 +1,18 @@
 package com.mathclub.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
+import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.mathclub.kit.StringKit;
 import com.mathclub.model.KeyPoint;
 
 public class KeyController extends BaseController {
@@ -21,17 +25,27 @@ public class KeyController extends BaseController {
 	 */
 	@ActionKey("/math:addKey")
 	public void addKey() {
-		String name = getPara("name");
-		int majorId = getParaToInt("majorId");
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> map2 = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (map2 == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		
+		String name = map2.get("name");
+		String majorId = map2.get("majorId");
 		log.info("name=" + name + "|majorId=" + majorId);
-		if (StrKit.isBlank(name) || majorId == 0) {
+		if (StrKit.isBlank(name) || Integer.valueOf(majorId) == 0) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;
 		}
 		Record record = new Record().set("name", name).set("majorId", majorId);
 		boolean res = Db.save("keypoint", "keyId", record);
 		if (res) {
-			renderJson(Ret.ok("keyId", record.get("keyId")).set("msg", "添加知识点成功"));
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("keyId", record.get("keyId"));
+			renderJson(Ret.ok("data", map).set("msg", "添加知识点成功"));
 			return;
 		} else {
 			renderJson(Ret.fail("msg", "添加知识点失败"));
@@ -44,8 +58,17 @@ public class KeyController extends BaseController {
 	 */
 	@ActionKey("/math:updateKey")
 	public void updateKey() {
-		String keyId = getPara("keyId");
-		String name = getPara("name");
+		
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		
+		String keyId = param.get("keyId");
+		String name = param.get("name");
 		log.info("name=" + name + "|keyId=" + keyId);
 		if (StrKit.isBlank(name) || StrKit.isBlank(keyId)) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
@@ -66,7 +89,16 @@ public class KeyController extends BaseController {
 	 */
 	@ActionKey("/math:deleteKey")
 	public void deleteKey() {
-		String keyId = getPara("keyId");
+		
+		String req = HttpKit.readData(getRequest());
+		log.info("req=" + req);
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(req) || (param == null)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		
+		String keyId = param.get("keyId");
 		log.info("|keyId=" + keyId);
 		if (StrKit.isBlank(keyId)) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
@@ -95,9 +127,9 @@ public class KeyController extends BaseController {
 		}
 		List<KeyPoint> list = keyDao.find("select * from keypoint where majorId = ?", majorId);
 		if (list != null && list.size() > 0) {
-			renderJson(Ret.ok("keys", list));
+			renderJson(Ret.ok("data", list));
 		} else {
-			renderJson(Ret.ok("msg", "没有知识点"));
+			renderJson(Ret.fail("msg", "没有知识点"));
 		}
 	}
 

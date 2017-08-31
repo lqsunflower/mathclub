@@ -31,44 +31,60 @@ public class TestService {
 
 	final int pageSize = 1;
 
-	/*public Ret addTestSubject(String name,int majorId,String subjectIds){
+	public Ret addTestSubject(String name, int majorId, String subjectIds) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("name", name);
 		map.put("majorId", majorId);
 		map.put("subjectIds", subjectIds);
-		
 		map.put("createTime", new Date());
+		map.put("modifyTime", new Date());
 		Record record = new Record().setColumns(map);
-		boolean result = Db.save("subject", "subjectId", record);
+		boolean result = Db.save("test", "id", record);
 		if (result) {
-			log.info("succeed to add subject.name=" + param.getName());
-			return Ret.ok("subjectId", record.get("subjectId"));
+			log.info("succeed to add test subject.name=" + name);
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("id", record.get("id"));
+			return Ret.ok("data", data);
 		} else {
-			log.error("failed to add subject.name=" + param.getName());
+			log.error("failed to add subject.name=" + name);
 			return Ret.fail("msg", "操作数据库失败");
 		}
 
+	}
+	
+	
+	public Ret update(String name, int majorId, String subjectIds,int testId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("name", name);
+		map.put("majorId", majorId);
+		map.put("subjectIds", subjectIds);
+		map.put("testId", testId);
+		map.put("modifyTime", new Date());
+		Record record = new Record().setColumns(map);
+		boolean ret = Db.update("test", "id", record);
+		if (ret) {
+			return Ret.ok("msg", "更新成功");
+		} else {
+			return Ret.fail("msg", "更新失败");
+		}
 	}
 
 	public Page<Subject> getSubjectListByKeyId(int keyId) {
 		return subjectDao.paginate(2, 1, "select *", "from subject where keyId=? order by createTime desc", keyId);
 	}
 
-	
-	 * public Subject getSubjectInfo(Integer subjectId, Integer keyId) { return
-	 * subjectDao
-	 * .findFirst("select * from subject where subjectId=? and keyId=?",
-	 * subjectId, keyId); }
-	 
+	public Subject getSubjectInfo(Integer subjectId, Integer keyId) {
+		return subjectDao.findFirst("select * from subject where subjectId=? and keyId=?", subjectId, keyId);
+	}
 
-	*//**
+	/**
 	 * 检查用户是否已点赞或点跪
 	 * 
 	 * @param integer
 	 * @param paraToInt
 	 * @param paraToInt2
 	 * @return
-	 *//*
+	 */
 	public boolean checkUserExists(int userId, int subjectId, int type) {
 		// 添加缓存
 		// subjectDao.findByCache(cacheName, key, sql);
@@ -91,19 +107,17 @@ public class TestService {
 		}
 	}
 
-	
-	 * public List<Subject> getSubjectListByName(String name) { return
-	 * subjectDao .find(
-	 * "select s.*, k.keyId from subject s inner join keypoint k on s.keyId=k.keyId where k.name=?"
-	 * , name); }
-	 
+	public List<Subject> getSubjectListByName(String name) {
+		return subjectDao.find(
+				"select s.*, k.keyId from subject s inner join keypoint k on s.keyId=k.keyId where k.name=?", name);
+	}
 
-	*//**
+	/**
 	 * 获取题目信息
 	 * 
 	 * @param para
 	 * @return
-	 *//*
+	 */
 	public SubjectVo getSubjectInfo(int subjectId, int userId) {
 		SubjectVo sv = new SubjectVo();
 		boolean[] sign = new boolean[2];
@@ -154,14 +168,14 @@ public class TestService {
 		}
 	}
 
-	*//**
+	/**
 	 * 分页查询
 	 * 
 	 * @param userId
 	 * @param keyId
 	 * @param pageNum
 	 * @return
-	 *//*
+	 */
 	public Ret querySubjectInfo(int userId, int keyId, int pageNum, int pageSize) {
 		Page<Subject> sub = getSubjectByPage(keyId, pageNum, pageSize);
 		boolean[] sign = new boolean[2];
@@ -205,37 +219,16 @@ public class TestService {
 		return Ret.create("state", "ok").set("sub", subVo);
 	}
 
-	*//**
+	/**
 	 * 分页查询页数
-	 *//*
+	 */
 	public Page<Subject> getSubjectByPage(int keyId, int pageNum, int pageSize) {
 		String select = "select *";
 		String sql = "from subject where keyId = ? order by createTime desc";
 		return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
 	}
 
-	public Ret update(Subject param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("subjectId", param.getSubjectId());
-		map.put("name", param.getName());
-		map.put("majorId", param.getMajorId());
-		map.put("pic", param.getPic());
-		map.put("apic", param.getApic());
-		map.put("hide", param.getHide());
-		map.put("answer", param.getAnswer());
-		map.put("answerNum", param.getAnswerNum());
-		map.put("hint", param.getHint());
-		map.put("author", param.getAuthor());
-		map.put("tags", param.getTags());
-		map.put("createTime", new Date());
-		Record record = new Record().setColumns(map);
-		boolean ret = Db.update("subject", "subjectId", record);
-		if (ret) {
-			return Ret.ok("msg", "更新题目成功");
-		} else {
-			return Ret.fail("msg", "更新题目失败");
-		}
-	}
+	
 
 	public Ret delete(int subjectId) {
 		int ret = Db.update("delete from subject where subjectId = ?", subjectId);
@@ -252,5 +245,5 @@ public class TestService {
 
 	public List<Subject> searchSubjectListByName(String name) {
 		return subjectDao.find("select * from subject where name like ?", "%" + name + "%");
-	}*/
+	}
 }

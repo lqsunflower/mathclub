@@ -21,6 +21,7 @@ import com.mathclub.controller.MajorController;
 import com.mathclub.controller.MsgController;
 import com.mathclub.controller.OauthWeixinController;
 import com.mathclub.controller.SubjectAdminController;
+import com.mathclub.controller.TestController;
 import com.mathclub.controller.UploadController;
 import com.mathclub.controller.UserController;
 import com.mathclub.model.KeyPoint;
@@ -80,6 +81,7 @@ public class MathClubConfig extends JFinalConfig {
 		me.add("/math", MajorController.class);
 		me.add("/kk", KeyController.class);
 		me.add("/ddd", UserController.class);
+		me.add("/test", TestController.class);
 		
 	}
 
