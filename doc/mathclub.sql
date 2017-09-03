@@ -10,10 +10,31 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2017-09-01 00:36:24
+Date: 2017-09-03 23:08:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `comment`
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `subjectId` int(11) NOT NULL,
+  `userName` varchar(64) DEFAULT NULL,
+  `text` varchar(255) DEFAULT NULL,
+  `pic` varchar(255) DEFAULT NULL,
+  `isToSys` int(2) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `parentId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `keypoint`
@@ -154,7 +175,7 @@ CREATE TABLE `test` (
 -- ----------------------------
 -- Records of test
 -- ----------------------------
-INSERT INTO `test` VALUES ('1', '2', 'test1', '2,4,3', '2017-08-30 22:46:35', null);
+INSERT INTO `test` VALUES ('1', '2', 'test1', '2,4,3', '2017-08-30 22:46:35', '2017-09-11 14:02:57');
 INSERT INTO `test` VALUES ('2', '2', 'test333', '2,4,3', '2017-08-30 23:06:47', '2017-08-30 23:06:47');
 
 -- ----------------------------
