@@ -3,7 +3,7 @@
  */
 package com.mathclub.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import com.jfinal.plugin.activerecord.Model;
 
@@ -27,7 +27,7 @@ public class Subject extends Model<Subject> {
 	private String hint;//提示
 	private String author;//题目作者
 	private String tags;//标签列表
-	private Timestamp createTime;//创建时间
+	private Date createTime;//创建时间
 	
 	public int getSubjectId() {
 		return subjectId;
@@ -101,10 +101,10 @@ public class Subject extends Model<Subject> {
 	public void setMajorId(int majorId) {
 		this.majorId = majorId;
 	}
-	public Timestamp getCreateTime() {
+	public Date getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 	
