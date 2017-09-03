@@ -61,7 +61,6 @@ public class TestController extends BaseController {
 	/**
 	 * 修改小测
 	 */
-
 	@ActionKey("/test:update")
 	public void updateSubject() {
 		
@@ -72,47 +71,48 @@ public class TestController extends BaseController {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
+		if (StrKit.isBlank(param.get("name")) || StrKit.isBlank(param.get("subjectIdList")) || StrKit.isBlank(param.get("majorId"))
+		    ||StrKit.isBlank(param.get("testId"))) {
+		    renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
 		String name = param.get("name");
 		int majorId = Integer.valueOf(param.get("majorId"));
 		String subjectIds = param.get("subjectIdList");
 		int testId = Integer.valueOf(param.get("testId"));
 		
-		log.info("name=" + name + "majorId=" + majorId + "subjectIds=" + subjectIds + "id=" + testId);
-
-		if (StrKit.isBlank(name) || StrKit.isBlank(subjectIds) || (majorId == 0) || (testId == 0)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
 		renderJson(testService.update(name, majorId, subjectIds, testId));
 	}
 
+	
+	
 	/**
-	 * (后台管理)删除题目
-	 */
-	// @ActionKey("/subject:delete")
-	public void deleteSubject() {
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		int subjectId = Integer.valueOf(param.get("subjectId"));
-		
-		log.info("subjectId=" + subjectId);
-		if (subjectId == 0) {
-			renderJson(Ret.fail("msg", "请求参数错误"));
-			return;
-		}
-		renderJson(testService.delete(getParaToInt("subjectId")));
-	}
+     * 修改小测
+     */
+    @ActionKey("/test:delete")
+    public void delete() {
+        String req = HttpKit.readData(getRequest());
+        log.info("delete test req=" + req);
+        if (StrKit.isBlank(req)) {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(param.get("testIds"))) {
+            renderJson(Ret.fail("msg", "请求参数错误"));
+            return;
+        }
+        String testIds = param.get("testIds");
+        
+        renderJson(testService.delete(testIds));
+    }
+
 
 	/**
 	 * (后台管理)根据题目ID获取题目信息
 	 */
 	// @ActionKey("/subject:findById")
-	public void getSubjectInfoById() {
+	/*public void getSubjectInfoById() {
 		log.info("get subject info request subjectId =" + getParaToInt("subjectId"));
 		Subject subject = testService.getSubjectInfoById(getParaToInt("subjectId"));
 		if (subject != null) {
@@ -120,13 +120,13 @@ public class TestController extends BaseController {
 		} else {
 			renderJson(Ret.fail("msg", "没有该题目"));
 		}
-	}
+	}*/
 
 	/**
 	 * (后台管理)分页查询题目根据知识点ID 给后台管理页面的接口
 	 */
 	// @ActionKey("/subject:list")
-	public void getSubjectListByPage() {
+	/*public void getSubjectListByPage() {
 		log.info("get subject list request majorId =" + getParaToInt("keyId"));
 		Page<Subject> subjectList = testService.getSubjectByPage(getParaToInt("keyId"), getParaToInt("p"),
 				getParaToInt("s"));
@@ -135,6 +135,6 @@ public class TestController extends BaseController {
 		} else {
 			renderJson(Ret.fail("msg", "没有题目信息"));
 		}
-	}
+	}*/
 
 }

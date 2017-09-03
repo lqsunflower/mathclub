@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
+import com.jfinal.kit.PropKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.SnsApi;
@@ -31,8 +32,6 @@ public class OauthWeixinController extends Controller {
 	OauthWeixinService oanthservice = new OauthWeixinService();
 	UserService userService = new UserService();
 	LoginController login = new LoginController();
-
-	String url = "http://112.74.44.117:8000/index.html#/searchall";
 
 	@ActionKey("/oauth")
 	public void processOauthRequest() {
@@ -71,10 +70,11 @@ public class OauthWeixinController extends Controller {
 		
 		if (toUrl.equals("1")) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(url);
+			sb.append(PropKit.get("url"));
 			sb.append("?o=").append(openId).append("&n=").append(nickName);
 			sb.append("&h=").append(headImgurl);
-			redirect301(sb.toString());
+			redirect(sb.toString());
+			//redirect301(sb.toString());
 		}
 
 	}
