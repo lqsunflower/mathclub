@@ -16,6 +16,7 @@ import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Engine;
 import com.mathclub.controller.AdminController;
+import com.mathclub.controller.CommentController;
 import com.mathclub.controller.KeyController;
 import com.mathclub.controller.MajorController;
 import com.mathclub.controller.MsgController;
@@ -24,6 +25,7 @@ import com.mathclub.controller.SubjectAdminController;
 import com.mathclub.controller.TestController;
 import com.mathclub.controller.UploadController;
 import com.mathclub.controller.UserController;
+import com.mathclub.model.Comment;
 import com.mathclub.model.KeyPoint;
 import com.mathclub.model.Like;
 import com.mathclub.model.Major;
@@ -82,6 +84,7 @@ public class MathClubConfig extends JFinalConfig {
 		me.add("/kk", KeyController.class);
 		me.add("/ddd", UserController.class);
 		me.add("/test", TestController.class);
+		me.add("/comment", CommentController.class);
 		
 	}
 
@@ -111,6 +114,7 @@ public class MathClubConfig extends JFinalConfig {
 		arp.addMapping("subject_like", "userId", Like.class);
 		arp.addMapping("session", "id", Session.class);
 		arp.addMapping("test", "id", TestSubject.class);
+		arp.addMapping("comment", "commentId", Comment.class);
 		
 		me.add(new EhCachePlugin());//配置缓存插件
 	}
