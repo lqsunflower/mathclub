@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
@@ -109,7 +110,7 @@ public class SubjectAdminController extends BaseController {
 	public void getSubjectInfoById() {
 
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		log.info("subject:findById req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
 		if (StrKit.isBlank(req) || (param == null)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -131,22 +132,28 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:list")
 	public void getSubjectListByPage() {
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
+		/*String req = HttpKit.readData(getRequest());
+		log.info("subject:list req=" + req);*/
+		String keyId = getPara("keyId");
+		String page = getPara("page");
+		String size = getPara("size");
+		LogKit.info("subject:list page=" + page + "--size=" + size);
+		if (StrKit.isBlank(page) || StrKit.isBlank(size)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
-		String keyId = param.get("keyId");
-		String page = param.get("page");
-		String size = param.get("size");
-		Page<Subject> subjectList = subjectService.getSubjectByPage(Integer.valueOf(keyId), Integer.valueOf(page),
-				Integer.valueOf(size));
-		if (subjectList != null && subjectList.getTotalPage() != 0) {
-			renderJson(Ret.ok("list", subjectList));
+		Page<Subject> subjectList = null;
+		if (StrKit.notBlank(keyId)) {
+			subjectList = subjectService.getSubjectByPage(Integer.valueOf(keyId), getPara("name"),
+					Integer.valueOf(page), Integer.valueOf(size));
 		} else {
-			renderJson(Ret.ok("msg", "没有题目信息"));
+			subjectList = subjectService.getSubjectByPage(0, getPara("name"), Integer.valueOf(page),
+					Integer.valueOf(size));
+		}
+		if (subjectList != null && subjectList.getTotalPage() != 0) {
+			renderJson(Ret.ok("data", subjectList));
+		} else {
+			renderJson(Ret.fail("msg", "没有题目信息"));
 		}
 	}
 

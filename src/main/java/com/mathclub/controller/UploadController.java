@@ -91,12 +91,12 @@ public class UploadController extends BaseController {
 		UploadFile uploadFile = null;
 		try {
 			// "upfile" 来自 config.json 中的 imageFieldName 配置项
-			uploadFile = getFile("file", UploadService.uploadTempPath, UploadService.imageMaxSize);
+			uploadFile = getFile("file", UploadService.uploadTempPath, UploadService.videoMaxSize);
 			Ret ret = srv.uploadVideoFile(user, uploadType, uploadFile);
 			renderJson(ret);
 		}
 		catch(com.jfinal.upload.ExceededSizeException ex) {
-			renderJson(Ret.fail("msg", "上传视频只允许 5M 大小"));
+			renderJson(Ret.fail("msg", "上传视频只允许 20M 大小"));
 		}
 		catch(Exception e) {
 			if (uploadFile != null) {

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -89,9 +90,8 @@ public class KeyController extends BaseController {
 	 */
 	@ActionKey("/math:deleteKey")
 	public void deleteKey() {
-		
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		LogKit.info("math:deleteKey req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
 		if (StrKit.isBlank(req) || (param == null)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -120,7 +120,7 @@ public class KeyController extends BaseController {
 	@ActionKey("/math:listKey")
 	public void getKeyList() {
 		String majorId = getPara("majorId");
-		log.info("|majorId=" + majorId);
+		LogKit.info("math:listKey req majorId=" + majorId);
 		if (StrKit.isBlank(majorId)) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;

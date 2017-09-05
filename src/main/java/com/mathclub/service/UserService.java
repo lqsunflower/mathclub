@@ -23,6 +23,10 @@ public class UserService {
 	public User queryUser(String openId) {
 		return dao.findFirst("select * from user where openId=? limit 1", openId);
 	}
+	
+	public User queryUserById(int userId) {
+		return dao.findFirst("select * from user where userId=? limit 1", userId);
+	}
 
 	public boolean addUser(String openid, String nickname, String headimgurl, String ip) {
 		if (StrKit.isBlank(openid)) {

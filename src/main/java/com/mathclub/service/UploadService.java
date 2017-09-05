@@ -42,6 +42,10 @@ public class UploadService {
 	 * 上传图片允许的最大尺寸，目前只允许 5M
 	 */
 	public static final int imageMaxSize = 5 * 1024 * 1024;
+	/**
+	 * 上传视频允许的最大尺寸，目前只允许 10M
+	 */
+	public static final int videoMaxSize = 20 * 1024 * 1024;
 
 	/**
 	 * 上传图片临时目录，相对于 baseUploadPath 的路径，是否以 "/" 并无影响 本项目的 baseUploadLoad 为

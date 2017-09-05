@@ -5,3 +5,4 @@ devMode = true
 appId=wxfa57b2b9baf9839a
 appSecret=c0d3572dc870e6f670d1568b12bde687
 token=mathclub
+url=http://112.74.44.117:8000/index.html#/searchall

@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -171,7 +172,7 @@ public class SubjectService {
 	 * @return
 	 */
 	public Ret querySubjectInfo(int userId, int keyId, int pageNum, int pageSize) {
-		Page<Subject> sub = getSubjectByPage(keyId, pageNum, pageSize);
+		Page<Subject> sub = getSubjectByPage(keyId, null, pageNum, pageSize);
 		boolean[] sign = new boolean[2];
 		int[] userSign = new int[2];
 		List<Subject> list = sub.getList();
@@ -216,10 +217,22 @@ public class SubjectService {
 	/**
 	 * 分页查询页数
 	 */
-	public Page<Subject> getSubjectByPage(int keyId, int pageNum, int pageSize) {
+	public Page<Subject> getSubjectByPage(int keyId, String name, int pageNum, int pageSize) {
 		String select = "select *";
-		String sql = "from subject where keyId = ? order by createTime desc";
-		return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
+		if (keyId != 0 && StrKit.notBlank(name)) {
+			String sql = "from subject where keyId = ? and name like ? order by createTime desc";
+			return subjectDao.paginate(pageNum, pageSize, select, sql, keyId, "%" + name + "%");
+		} else if (keyId != 0) {
+			String sql = "from subject where keyId = ? order by createTime desc";
+			return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
+		} else if (StrKit.notBlank(name)) {
+			String sql = "from subject where name like ? order by createTime desc";
+			return subjectDao.paginate(pageNum, pageSize, select, sql, "%" + name + "%");
+		} else {
+			String sql = "from subject order by createTime desc";
+			return subjectDao.paginate(pageNum, pageSize, select, sql);
+		}
+
 	}
 
 	public Ret update(Map<String, String> param) {
