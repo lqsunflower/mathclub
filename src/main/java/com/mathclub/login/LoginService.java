@@ -14,6 +14,7 @@
 
 package com.mathclub.login;
 
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -37,7 +38,7 @@ public class LoginService {
 	public static final String loginUserCacheName = "loginUser";
 
 	// "jfinalId" 仅用于 cookie 名称，其它地方如 cache 中全部用的 "sessionId" 来做 key
-	public static final String sessionIdName = "liqiuId";
+	public static final String sessionIdName = "sessionId";
 
 	/**
 	 * 登录成功返回 sessionId 与 loginUser，否则返回一个 msg
@@ -45,7 +46,7 @@ public class LoginService {
 	public Ret login(String openId, boolean keepLogin, String loginIp) {
 		User loginUser = userDao.findFirst("select * from user where openId=? limit 1", openId);
 		if (loginUser == null) {
-			return Ret.fail("msg", "用户名或密码不正确");
+			return Ret.fail("msg", "没有该用户名");
 		}
 		// 如果用户勾选保持登录，暂定过期时间为 3 年，否则为 120 分钟，单位为秒
 		long liveSeconds =  keepLogin ? 3 * 365 * 24 * 60 * 60 : 120 * 60;
@@ -58,9 +59,9 @@ public class LoginService {
 		String sessionId = StrKit.getRandomUUID();
 		session.setId(sessionId);
 		session.setUserId(loginUser.toRecord().get("userId"));
-		System.out.println("userId=  " + loginUser.toRecord().get("userId"));
-		
 		session.setExpireAt(expireAt);
+		
+		LogKit.info("login userId=  " + loginUser.toRecord().get("userId"));
 		if (!session.save()) {
 			return Ret.fail("msg", "保存 session 到数据库失败，请联系管理员");
 		}

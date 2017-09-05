@@ -74,7 +74,6 @@ public class OauthWeixinController extends Controller {
 			sb.append("?o=").append(openId).append("&n=").append(nickName);
 			sb.append("&h=").append(headImgurl);
 			redirect(sb.toString());
-			//redirect301(sb.toString());
 		}
 
 	}

@@ -7,7 +7,6 @@ package com.mathclub.controller;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.json.FastJson;
@@ -42,7 +41,7 @@ public class CommentController extends BaseController {
 		String req = HttpKit.readData(getRequest());
 		log.info("message add req=" + req);
 		Comment comm = FastJson.getJson().parse(req, Comment.class);
-		String sessionId = getHeader("token");
+		String sessionId = getHeader("sessionId");
 		LogKit.info("sessionId=" + sessionId);
 		if (comm.getSubjectId() == 0 || StrKit.isBlank(comm.getText()) || StrKit.isBlank(sessionId)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -60,7 +59,6 @@ public class CommentController extends BaseController {
 		renderJson(commentService.add(userId, comm));
 	}
 
-	@Test
 	public void a() {
 		// String a = "{\"userId\":234,\"nickName\":\"liqiu\"}";
 		String a = "{\"nickName\":\"liqiu\"}";
