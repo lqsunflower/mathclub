@@ -30,8 +30,6 @@ public class SubjectService {
 	public static final Subject subjectDao = new Subject().dao();
 	private static final Like likeDao = new Like().dao();
 
-	final int pageSize = 1;
-
 	public Ret addSubject(Map<String, String> param) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("name", param.get("name"));
@@ -90,7 +88,7 @@ public class SubjectService {
 		return result;
 	}
 
-	public boolean like(Integer userId, Integer subjectId, Integer type) {
+	public boolean like(int userId, int subjectId, int type) {
 		int result = Db.update("insert into subject_like(userId,subjectId,type,createTime) values(?, ?, ?, ?)", userId,
 				subjectId, type, new Date());
 		if (result == 1) {
@@ -179,6 +177,7 @@ public class SubjectService {
 		if (list == null || list.size() == 0) {
 			return Ret.fail("msg", "该知识点没有题目");
 		}
+		System.out.println("list " + list.toString());
 		SubjectVo subVo = JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
 		System.out.println("subjet0000 " + subVo.getName() + "kkk=" + subVo.getTags());
 		// 根据题目id查询点赞人数和点跪人数，并且查询是否点赞或者点跪

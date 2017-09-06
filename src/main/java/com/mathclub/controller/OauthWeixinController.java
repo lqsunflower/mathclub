@@ -81,7 +81,7 @@ public class OauthWeixinController extends Controller
         sb.append(PropKit.get("url"));
         sb.append("?o=").append(openId).append("&n=").append(nickName);
         sb.append("&h=").append(headImgurl);
-        sb.append("&sessionId").append(
+        sb.append("&sessionId=").append(
             ret.getStr(LoginService.sessionIdName));
         if (toUrl.equals("50"))
         {

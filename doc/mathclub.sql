@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2017-09-03 23:08:17
+Date: 2017-09-07 00:02:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
-  `id` int(11) NOT NULL,
+  `commentId` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `subjectId` int(11) NOT NULL,
   `userName` varchar(64) DEFAULT NULL,
@@ -29,12 +29,19 @@ CREATE TABLE `comment` (
   `isToSys` int(2) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   `parentId` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`commentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of comment
 -- ----------------------------
+INSERT INTO `comment` VALUES ('1', '8', '234', null, '添加评论', null, '0', '2017-09-04 23:12:42', null);
+INSERT INTO `comment` VALUES ('2', '8', '234', null, '第二条哈哈哈添加评论', null, '0', '2017-09-04 23:18:26', null);
+INSERT INTO `comment` VALUES ('3', '8', '234', null, '第二条哈哈哈添发发发加评论', null, '0', '2017-09-04 23:22:30', null);
+INSERT INTO `comment` VALUES ('4', '8', '234', null, '第二条哈哈哈添发发发加评论', null, '0', '2017-09-05 23:09:01', null);
+INSERT INTO `comment` VALUES ('5', '8', '234', null, '第二条哈哈哈添发发发加评论', null, '0', '2017-09-06 00:07:18', null);
+INSERT INTO `comment` VALUES ('6', '8', '5534', null, '第二条坎坎坷坷添发发发加评论', null, '0', '2017-09-06 22:39:24', null);
+INSERT INTO `comment` VALUES ('7', '8', '5534', 'silence', '第二条坎坎坷坷添发发发加评论', null, '0', '2017-09-06 22:44:15', null);
 
 -- ----------------------------
 -- Table structure for `keypoint`
@@ -71,6 +78,9 @@ CREATE TABLE `login_log` (
 -- Records of login_log
 -- ----------------------------
 INSERT INTO `login_log` VALUES ('8', '2017-08-29 23:51:39', '127.0.0.1');
+INSERT INTO `login_log` VALUES ('8', '2017-09-06 21:57:29', '127.0.0.1');
+INSERT INTO `login_log` VALUES ('8', '2017-09-06 21:59:22', '127.0.0.1');
+INSERT INTO `login_log` VALUES ('8', '2017-09-07 00:00:47', '127.0.0.1');
 
 -- ----------------------------
 -- Table structure for `major`
@@ -106,7 +116,10 @@ CREATE TABLE `session` (
 -- ----------------------------
 -- Records of session
 -- ----------------------------
+INSERT INTO `session` VALUES ('28b008400a2e4c83a01968e989c0d6ab', '8', '1504720847525');
+INSERT INTO `session` VALUES ('70263433c390432aa9205d014f420922', '8', '1504713449109');
 INSERT INTO `session` VALUES ('781100a1d63143d790d130d945e1049e', '8', '1503227120096');
+INSERT INTO `session` VALUES ('908a61c720d54ca29eab441711f38bdc', '8', '1504713561405');
 INSERT INTO `session` VALUES ('9b9ca4622a5a431288c19edec7cdfde7', '8', '1504029099072');
 
 -- ----------------------------
@@ -128,35 +141,42 @@ CREATE TABLE `subject` (
   `tags` varchar(255) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`subjectId`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of subject
 -- ----------------------------
 INSERT INTO `subject` VALUES ('8', '3', '8', '更新', 'kkk', null, null, '哈哈哈', '0', null, null, '1,2,3', '2017-08-20 23:50:55');
-INSERT INTO `subject` VALUES ('9', '3', '2', '学科', 's', 'd', 's', 's', '3', '3', null, null, null);
+INSERT INTO `subject` VALUES ('9', '3', '2', '学科哈', 's', 'd', 's', 's', '3', '3', null, null, null);
 INSERT INTO `subject` VALUES ('10', '2', '3', '科目', '的', null, null, null, null, null, null, null, null);
-INSERT INTO `subject` VALUES ('11', null, '99', '哈哈哈李邱', '000', null, null, 'xxxx', '0', null, null, null, '2017-08-31 23:14:29');
-INSERT INTO `subject` VALUES ('12', null, '99', '哈哈李邱7777', '000', null, null, 'xxxx', null, null, null, null, '2017-08-31 23:34:29');
+INSERT INTO `subject` VALUES ('11', '5', '99', '哈哈哈李邱', '000', null, null, 'xxxx', '0', null, null, null, '2017-08-31 23:14:29');
+INSERT INTO `subject` VALUES ('12', '8', '99', '哈哈李邱7777', '000', null, null, 'xxxx', null, null, null, null, '2017-08-31 23:34:29');
+INSERT INTO `subject` VALUES ('13', '8', '3', '个', '但是', '等等', '等等', '的', null, null, null, null, null);
+INSERT INTO `subject` VALUES ('14', null, '5', '1', '0000', null, null, '回答', null, null, null, null, '2017-09-06 23:02:33');
+INSERT INTO `subject` VALUES ('15', null, '5', '1', '0000', null, null, '回答', null, null, null, null, '2017-09-06 23:13:52');
 
 -- ----------------------------
 -- Table structure for `subject_like`
 -- ----------------------------
 DROP TABLE IF EXISTS `subject_like`;
 CREATE TABLE `subject_like` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  `subjectId` int(11) DEFAULT NULL,
+  `subjectId` int(11) NOT NULL,
   `type` int(2) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
-  PRIMARY KEY (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of subject_like
 -- ----------------------------
-INSERT INTO `subject_like` VALUES ('1', '2', '1', '2017-08-10 23:01:00');
-INSERT INTO `subject_like` VALUES ('2', '2', '1', '2017-08-10 23:05:24');
-INSERT INTO `subject_like` VALUES ('3', '2', '1', '2017-08-10 23:15:23');
+INSERT INTO `subject_like` VALUES ('1', '1', '2', '1', '2017-08-10 23:01:00');
+INSERT INTO `subject_like` VALUES ('2', '2', '2', '1', '2017-08-10 23:05:24');
+INSERT INTO `subject_like` VALUES ('3', '3', '2', '1', '2017-08-10 23:15:23');
+INSERT INTO `subject_like` VALUES ('4', '8', '2', '1', '2017-09-06 22:48:09');
+INSERT INTO `subject_like` VALUES ('5', '8', '3', '1', '2017-09-06 23:21:17');
+INSERT INTO `subject_like` VALUES ('6', '8', '5', '1', '2017-09-06 23:25:34');
 
 -- ----------------------------
 -- Table structure for `test`
@@ -192,7 +212,7 @@ CREATE TABLE `upload_counter` (
 -- ----------------------------
 -- Records of upload_counter
 -- ----------------------------
-INSERT INTO `upload_counter` VALUES ('image', '6', '图片文件');
+INSERT INTO `upload_counter` VALUES ('image', '7', '图片文件');
 INSERT INTO `upload_counter` VALUES ('video', '1', '视频文件');
 
 -- ----------------------------

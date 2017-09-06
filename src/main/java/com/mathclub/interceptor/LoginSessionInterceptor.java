@@ -15,11 +15,10 @@ import com.mathclub.model.User;
  */
 public class LoginSessionInterceptor implements Interceptor {
 
-
 	public void intercept(Invocation inv) {
         User loginAccount = null;
 		Controller c = inv.getController();
-		String sessionId = c.getCookie(LoginService.sessionIdName);
+		String sessionId = c.getHeader(LoginService.sessionIdName);
 		if (sessionId != null) {
 			loginAccount = LoginService.me.getLoginAccountWithSessionId(sessionId);
 			if (loginAccount == null) {
@@ -35,16 +34,6 @@ public class LoginSessionInterceptor implements Interceptor {
 		}
 
 		inv.invoke();
-
-        /*if (loginAccount != null) {
-            // remind 对象用于生成提醒 tips
-            Remind remind = RemindService.me.getRemind(loginAccount.getId());
-            if (remind != null) {
-                if (remind.getReferMe() > 0 || remind.getMessage() > 0 || remind.getFans() > 0) {
-                    c.setAttr(remindKey, remind);
-                }
-            }
-        }*/
 	}
 }
 

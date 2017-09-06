@@ -14,6 +14,7 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.Comment;
@@ -21,6 +22,7 @@ import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
 import com.mathclub.model.User;
 import com.mathclub.service.CommentService;
+import com.mathclub.service.SessionService;
 import com.mathclub.service.SubjectService;
 import com.mathclub.service.UserService;
 
@@ -35,6 +37,7 @@ public class CommentController extends BaseController {
 	private CommentService commentService = new CommentService();
 
 	private UserService userService = new UserService();
+
 	/**
 	 * 添加回复
 	 */
@@ -50,21 +53,20 @@ public class CommentController extends BaseController {
 			return;
 		}
 		int userId = 0;
-		Session user = Session.dao.findFirst("select * from session where id = ?", sessionId);
-		if (user != null) {
-			userId = user.getUserId();
-			User u = userService.queryUserById(userId);
-			LogKit.info("name======" + u.toRecord().get("nickName"));
+		User user = null;
+		Session session = SessionService.getUserId(sessionId);
+		if (session != null) {
+			userId = session.getUserId();
+			LogKit.info("userId======" + userId);
+			user = userService.queryUserById(userId);
+			LogKit.info("name======" + user.toRecord().get("nickName"));
 		} else {
 			renderJson(Ret.fail("msg", "没有该用户"));
 			return;
 		}
-		renderJson(commentService.add(userId, comm));
+		renderJson(commentService.add(userId, user.toRecord().get("nickName"), comm));
 	}
 
-	
-	
-	
 	public void a() {
 		// String a = "{\"userId\":234,\"nickName\":\"liqiu\"}";
 		String a = "{\"nickName\":\"liqiu\"}";
