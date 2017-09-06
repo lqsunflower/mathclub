@@ -37,7 +37,7 @@ public class SubjectAdminController extends BaseController {
 	@ActionKey("/subject:add")
 	public void addSubject() {
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		log.info("subject:add req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
 		if (StrKit.isBlank(req) || (param == null)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -46,7 +46,7 @@ public class SubjectAdminController extends BaseController {
 		String name = param.get("name");
 		String majorId = param.get("majorId");
 		String tags = param.get("tags");
-		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
+		log.info("subject:add name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
 
 		if (StrKit.isBlank(name) || StrKit.isBlank(param.get("answer")) || StrKit.isBlank(param.get("pic"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
