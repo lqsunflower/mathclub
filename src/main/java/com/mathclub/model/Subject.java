@@ -21,14 +21,22 @@ public class Subject extends Model<Subject> {
 	private String name;//题目名称
 	private String pic;//题目图片地址
 	private String apic;//答案图片地址
-	private String hide;//是否隐藏
+	private int hide;//是否隐藏
 	private String answer;//选择题答案
 	private int answerNum;//选择题数量
 	private String hint;//提示
 	private String author;//题目作者
 	private String tags;//标签列表
+	private String video;//列表
 	private Date createTime;//创建时间
+	private Date modifyTime;//修改时间
 	
+	public String getVideo() {
+		return video;
+	}
+	public void setVideo(String video) {
+		this.video = video;
+	}
 	public int getSubjectId() {
 		return subjectId;
 	}
@@ -53,10 +61,10 @@ public class Subject extends Model<Subject> {
 	public void setApic(String apic) {
 		this.apic = apic;
 	}
-	public String getHide() {
+	public int getHide() {
 		return hide;
 	}
-	public void setHide(String hide) {
+	public void setHide(int hide) {
 		this.hide = hide;
 	}
 	public String getAnswer() {
@@ -106,6 +114,12 @@ public class Subject extends Model<Subject> {
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
 	}
 	
 }

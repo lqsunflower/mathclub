@@ -17,6 +17,7 @@ import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.Subject;
 import com.mathclub.service.SubjectService;
@@ -45,10 +46,11 @@ public class SubjectAdminController extends BaseController {
 		}
 		String name = param.get("name");
 		String majorId = param.get("majorId");
-		String tags = param.get("tags");
-		log.info("subject:add name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
+		String pic = param.get("pic");
+		String apic = param.get("apic");
+		log.info("subject:add name=" + name + "majorId=" + majorId + "pic=" + pic + "apic=" + param.get("apic"));
 
-		if (StrKit.isBlank(name) || StrKit.isBlank(param.get("answer")) || StrKit.isBlank(param.get("pic"))) {
+		if (StrKit.isBlank(name) || StrKit.isBlank(pic) || StrKit.isBlank(apic)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -69,11 +71,10 @@ public class SubjectAdminController extends BaseController {
 		}
 		String name = param.get("name");
 		String majorId = param.get("majorId");
-		String tags = param.get("tags");
-		log.info("name=" + name + "majorId=" + majorId + "tags=" + tags + "answer=" + param.get("answer"));
+		String keyId = param.get("keyId");
+		log.info("name=" + name + "majorId=" + majorId + "keyId=" + keyId + "answer=" + param.get("answer"));
 
-		if (Integer.valueOf(param.get("subjectId")) == 0 || StrKit.isBlank(name)
-				|| StrKit.isBlank(param.get("answer"))) {
+		if (StrKit.isBlank(name) || Integer.valueOf(param.get("subjectId")) == 0 || StrKit.isBlank(name)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -100,7 +101,7 @@ public class SubjectAdminController extends BaseController {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;
 		}
-		renderJson(subjectService.delete(getParaToInt("subjectId")));
+		renderJson(subjectService.delete(Integer.valueOf(subjectId)));
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class SubjectAdminController extends BaseController {
 		log.info("get subject info request subjectId =" + subjectId);
 		Subject subject = subjectService.getSubjectInfoById(Integer.valueOf(subjectId));
 		if (subject != null) {
-			renderJson(Ret.ok("sub", subject));
+			renderJson(Ret.ok("data", subject));
 		} else {
 			renderJson(Ret.fail("msg", "没有该题目"));
 		}
@@ -132,9 +133,11 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:list")
 	public void getSubjectListByPage() {
-		/*String req = HttpKit.readData(getRequest());
-		log.info("subject:list req=" + req);*/
-		String keyId = getPara("keyId");
+		/*
+		 * String req = HttpKit.readData(getRequest());
+		 * log.info("subject:list req=" + req);
+		 */
+		String keyId = getPara("keyId"); 
 		String page = getPara("page");
 		String size = getPara("size");
 		LogKit.info("subject:list page=" + page + "--size=" + size);
@@ -142,7 +145,8 @@ public class SubjectAdminController extends BaseController {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
-		Page<Subject> subjectList = null;
+		
+		Page<Record> subjectList = null;
 		if (StrKit.notBlank(keyId)) {
 			subjectList = subjectService.getSubjectByPage(Integer.valueOf(keyId), getPara("name"),
 					Integer.valueOf(page), Integer.valueOf(size));

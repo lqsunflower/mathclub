@@ -3,6 +3,7 @@
  */
 package com.mathclub.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.alibaba.fastjson.JSONObject;
+import com.jfinal.json.FastJson;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -34,15 +35,22 @@ public class SubjectService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("name", param.get("name"));
 		map.put("majorId", param.get("majorId"));
+		map.put("keyId", param.get("keyId"));
 		map.put("pic", param.get("pic"));
 		map.put("apic", param.get("apic"));
-		map.put("hide", param.get("hide"));
+		if (StrKit.isBlank(param.get("hide"))) {
+			map.put("hide", 0);
+		} else {
+			map.put("hide", param.get("hide"));
+		}
 		map.put("answer", param.get("answer"));
 		map.put("answerNum", param.get("answerNum"));
 		map.put("hint", param.get("hint"));
 		map.put("author", param.get("author"));
+		map.put("video", param.get("video"));
 		map.put("tags", param.get("tags"));
 		map.put("createTime", new Date());
+		map.put("modifyTime", new Date());
 		Record record = new Record().setColumns(map);
 		boolean result = Db.save("subject", "subjectId", record);
 		if (result) {
@@ -113,8 +121,8 @@ public class SubjectService {
 	 */
 	public SubjectVo getSubjectInfo(int subjectId, int userId) {
 		SubjectVo sv = new SubjectVo();
-		boolean[] sign = new boolean[2];
-		int[] userSign = new int[2];
+		boolean[] userSign = new boolean[2];
+		int[] sign = new int[2];
 		Subject subject = getSubjectInfoById(subjectId);
 		if (subject == null) {
 			return null;
@@ -132,22 +140,22 @@ public class SubjectService {
 					subjectId);
 			int unlikeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 2",
 					subjectId);
-			userSign[0] = likeCount;
-			userSign[1] = unlikeCount;
+			sign[0] = likeCount;
+			sign[1] = unlikeCount;
 			sv.setUserSign(userSign);
 			Like like = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 1",
 					userId, subjectId);
 			if (like != null) {
-				sign[0] = true;
+				userSign[0] = true;
 			} else {
-				sign[0] = false;
+				userSign[0] = false;
 			}
 			Like unlike = likeDao.findFirst(
 					"select * from subject_like where userId = ? and subjectId = ? and type = 2", userId, subjectId);
 			if (unlike != null) {
-				sign[1] = true;
+				userSign[1] = true;
 			} else {
-				sign[1] = false;
+				userSign[1] = false;
 			}
 			sv.setSign(sign);
 			Integer n = Db.queryInt("select * from subject_like where userId = ? and subjectId = ? and type = 3",
@@ -162,7 +170,7 @@ public class SubjectService {
 	}
 
 	/**
-	 * 分页查询
+	 * 分页查询 包括用户点赞情况信息
 	 * 
 	 * @param userId
 	 * @param keyId
@@ -170,66 +178,99 @@ public class SubjectService {
 	 * @return
 	 */
 	public Ret querySubjectInfo(int userId, int keyId, int pageNum, int pageSize) {
-		Page<Subject> sub = getSubjectByPage(keyId, null, pageNum, pageSize);
-		boolean[] sign = new boolean[2];
-		int[] userSign = new int[2];
-		List<Subject> list = sub.getList();
+		Page<Record> page = getSubjectListByPage(keyId, pageNum, pageSize);
+		boolean[] userSign = new boolean[2];
+		int[] sign = new int[2];
+
+		List<Record> list = page.getList();
 		if (list == null || list.size() == 0) {
 			return Ret.fail("msg", "该知识点没有题目");
 		}
-		System.out.println("list " + list.toString());
-		SubjectVo subVo = JSONObject.parseObject(list.get(0).toJson(), SubjectVo.class);
-		System.out.println("subjet0000 " + subVo.getName() + "kkk=" + subVo.getTags());
+		List<SubjectVo> subs = new ArrayList<SubjectVo>();
+		for (Record record : list) {
+			System.out.println("hhhhhh" + record.toJson());
+
+			SubjectVo subVo = FastJson.getJson().parse(record.toJson(), SubjectVo.class);
+
+			System.out.println("getSubjectId " + subVo.getSubjectId());
+			int likeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 1",
+					subVo.getSubjectId());
+			int unlikeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 2",
+					subVo.getSubjectId());
+			sign[0] = likeCount;
+			sign[1] = unlikeCount;
+			subVo.setUserSign(userSign);
+			Like like = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 1",
+					userId, subVo.getSubjectId());
+			if (like != null) {
+				userSign[0] = true;
+			} else {
+				userSign[0] = false;
+			}
+			Like unlike = likeDao.findFirst(
+					"select * from subject_like where userId = ? and subjectId = ? and type = 2", userId,
+					subVo.getSubjectId());
+			if (unlike != null) {
+				userSign[1] = true;
+			} else {
+				userSign[1] = false;
+			}
+			subVo.setSign(sign);
+			Integer n = Db.queryInt("select * from subject_like where userId = ? and subjectId = ? and type = 3",
+					userId, subVo.getSubjectId());
+			if (n != null) {
+				subVo.setFavorite(true);
+			} else {
+				subVo.setFavorite(false);
+			}
+			subs.add(subVo);
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("list", subs);
+		map.put("totalPage", page.getTotalPage());
+		map.put("totalRow", page.getTotalRow());
+		map.put("isFirstPage", page.isFirstPage());
+		map.put("isLastPage", page.isLastPage());
+
 		// 根据题目id查询点赞人数和点跪人数，并且查询是否点赞或者点跪
-		int likeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 1",
-				subVo.getSubjectId());
-		int unlikeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 2",
-				subVo.getSubjectId());
-		userSign[0] = likeCount;
-		userSign[1] = unlikeCount;
-		subVo.setUserSign(userSign);
-		Like like = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 1",
-				userId, subVo.getSubjectId());
-		if (like != null) {
-			sign[0] = true;
-		} else {
-			sign[0] = false;
-		}
-		Like unlike = likeDao.findFirst("select * from subject_like where userId = ? and subjectId = ? and type = 2",
-				userId, subVo.getSubjectId());
-		if (unlike != null) {
-			sign[1] = true;
-		} else {
-			sign[1] = false;
-		}
-		subVo.setSign(sign);
-		Integer n = Db.queryInt("select * from subject_like where userId = ? and subjectId = ? and type = 3", userId,
-				subVo.getSubjectId());
-		if (n != null) {
-			subVo.setFavorite(true);
-		} else {
-			subVo.setFavorite(false);
-		}
-		return Ret.create("state", "ok").set("data", subVo);
+		return Ret.ok("data", map);
 	}
 
 	/**
-	 * 分页查询页数
+	 * 查询题目分页
+	 * 
+	 * @param keyId
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
 	 */
-	public Page<Subject> getSubjectByPage(int keyId, String name, int pageNum, int pageSize) {
-		String select = "select *";
+	private Page<Record> getSubjectListByPage(int keyId, int pageNum, int pageSize) {
+		String select = "select s.*,k.name as keyName";
+		if (keyId != 0) {
+			String sql = "from subject s inner join keypoint k on s.keyId=k.keyId where s.keyId = ? and s.hide = 0 order by createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql, keyId);
+		}
+		return null;
+	}
+
+	/**
+	 * 分页查询全部信息包括知识点和学科名字
+	 */
+	public Page<Record> getSubjectByPage(int keyId, String name, int pageNum, int pageSize) {
+		String select = "select s.*,k.name as keyName,m.name as majorName";
 		if (keyId != 0 && StrKit.notBlank(name)) {
-			String sql = "from subject where keyId = ? and name like ? order by createTime desc";
-			return subjectDao.paginate(pageNum, pageSize, select, sql, keyId, "%" + name + "%");
+			String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by s.createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql, keyId, "%" + name + "%");
 		} else if (keyId != 0) {
-			String sql = "from subject where keyId = ? order by createTime desc";
-			return subjectDao.paginate(pageNum, pageSize, select, sql, keyId);
+			String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? order by s.createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql, keyId);
 		} else if (StrKit.notBlank(name)) {
-			String sql = "from subject where name like ? order by createTime desc";
-			return subjectDao.paginate(pageNum, pageSize, select, sql, "%" + name + "%");
+			String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by s.createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql, "%" + name + "%");
 		} else {
-			String sql = "from subject order by createTime desc";
-			return subjectDao.paginate(pageNum, pageSize, select, sql);
+			String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by s.createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql);
 		}
 
 	}
@@ -239,6 +280,7 @@ public class SubjectService {
 		map.put("subjectId", param.get("subjectId"));
 		map.put("name", param.get("name"));
 		map.put("majorId", param.get("majorId"));
+		map.put("keyId", param.get("keyId"));
 		map.put("pic", param.get("pic"));
 		map.put("apic", param.get("apic"));
 		map.put("hide", param.get("hide"));
@@ -247,7 +289,7 @@ public class SubjectService {
 		map.put("hint", param.get("hint"));
 		map.put("author", param.get("author"));
 		map.put("tags", param.get("tags"));
-		map.put("createTime", new Date());
+		map.put("modifyTime", new Date());
 		Record record = new Record().setColumns(map);
 		boolean ret = Db.update("subject", "subjectId", record);
 		if (ret) {

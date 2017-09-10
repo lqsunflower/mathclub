@@ -93,7 +93,7 @@ public class OauthWeixinController extends Controller
         else if (toUrl.equals("51"))
         {
             // 51表示线性代数
-            sb.append("&type=subject").append("&name=").append("xianxing");
+            sb.append("&type=subject").append("&name=").append("xiandai");
             redirect(sb.toString());
             return;
         }

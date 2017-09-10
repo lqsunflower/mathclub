@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2017-09-07 00:02:19
+Date: 2017-09-10 23:52:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -133,27 +133,31 @@ CREATE TABLE `subject` (
   `name` varchar(64) DEFAULT NULL COMMENT '名称',
   `pic` varchar(255) DEFAULT NULL,
   `apic` varchar(255) DEFAULT NULL,
-  `hide` char(11) DEFAULT NULL,
+  `hide` int(2) DEFAULT '0',
   `answer` varchar(64) DEFAULT NULL,
   `answerNum` int(11) DEFAULT NULL,
-  `hint` varchar(128) DEFAULT NULL,
+  `hint` varchar(255) DEFAULT NULL,
   `author` varchar(128) DEFAULT NULL,
   `tags` varchar(255) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
+  `modifyTime` datetime DEFAULT NULL,
+  `video` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`subjectId`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of subject
 -- ----------------------------
-INSERT INTO `subject` VALUES ('8', '3', '8', '更新', 'kkk', null, null, '哈哈哈', '0', null, null, '1,2,3', '2017-08-20 23:50:55');
-INSERT INTO `subject` VALUES ('9', '3', '2', '学科哈', 's', 'd', 's', 's', '3', '3', null, null, null);
-INSERT INTO `subject` VALUES ('10', '2', '3', '科目', '的', null, null, null, null, null, null, null, null);
-INSERT INTO `subject` VALUES ('11', '5', '99', '哈哈哈李邱', '000', null, null, 'xxxx', '0', null, null, null, '2017-08-31 23:14:29');
-INSERT INTO `subject` VALUES ('12', '8', '99', '哈哈李邱7777', '000', null, null, 'xxxx', null, null, null, null, '2017-08-31 23:34:29');
-INSERT INTO `subject` VALUES ('13', '8', '3', '个', '但是', '等等', '等等', '的', null, null, null, null, null);
-INSERT INTO `subject` VALUES ('14', null, '5', '1', '0000', null, null, '回答', null, null, null, null, '2017-09-06 23:02:33');
-INSERT INTO `subject` VALUES ('15', null, '5', '1', '0000', null, null, '回答', null, null, null, null, '2017-09-06 23:13:52');
+INSERT INTO `subject` VALUES ('8', '3', '8', '更新', 'kkk', null, null, '哈哈哈', '0', null, null, '1,2,3', '2017-08-20 23:50:55', null, null);
+INSERT INTO `subject` VALUES ('10', '2', '3', '科目', '的', null, null, null, null, null, null, null, null, null, null);
+INSERT INTO `subject` VALUES ('11', '5', '99', '哈哈哈李邱', '000', null, '0', 'xxxx', '0', null, null, null, '2017-08-31 23:14:29', null, null);
+INSERT INTO `subject` VALUES ('12', '8', '99', '哈哈李邱7777', '000', null, null, 'xxxx', null, null, null, null, '2017-08-31 23:34:29', null, null);
+INSERT INTO `subject` VALUES ('13', '8', '3', '个', '但是', '等等', null, '的', null, null, null, null, null, null, null);
+INSERT INTO `subject` VALUES ('16', '243', '23', '更改哥哥', 'hhh', '9999', null, null, null, null, null, null, '2017-09-08 19:22:00', '2017-09-08 19:25:05', null);
+INSERT INTO `subject` VALUES ('17', '5', '3', '李邱大大方方', null, null, '0', null, null, null, null, null, '2017-09-09 00:12:19', '2017-09-09 00:12:22', null);
+INSERT INTO `subject` VALUES ('18', '8', '5', '1', '0000', '999', null, '回答', null, null, null, null, '2017-09-09 00:20:46', '2017-09-09 00:20:46', null);
+INSERT INTO `subject` VALUES ('19', '8', '5', '1', '0000', '999', '1', '回答', null, null, null, null, '2017-09-09 00:22:39', '2017-09-09 00:22:39', null);
+INSERT INTO `subject` VALUES ('20', '8', '5', '1', '0000', '999', '0', '回答', null, null, null, null, '2017-09-09 00:22:52', '2017-09-09 00:22:52', null);
 
 -- ----------------------------
 -- Table structure for `subject_like`
@@ -190,13 +194,14 @@ CREATE TABLE `test` (
   `createTime` datetime DEFAULT NULL,
   `modifyTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of test
 -- ----------------------------
 INSERT INTO `test` VALUES ('1', '2', 'test1', '2,4,3', '2017-08-30 22:46:35', '2017-09-11 14:02:57');
 INSERT INTO `test` VALUES ('2', '2', 'test333', '2,4,3', '2017-08-30 23:06:47', '2017-08-30 23:06:47');
+INSERT INTO `test` VALUES ('3', '5', '1', '回答', '2017-09-09 00:26:58', '2017-09-09 00:26:58');
 
 -- ----------------------------
 -- Table structure for `upload_counter`

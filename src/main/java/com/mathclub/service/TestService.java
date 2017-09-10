@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -76,9 +77,22 @@ public class TestService {
 		return Ret.ok();
 	}
 
-	public Ret getListByPage(int page, int rows, String majorId) {
-		Page<TestSubject> list = testDao.paginate(page, rows, "select *",
-				"from test where majorId=? order by createTime desc", majorId);
+	public Ret getListByPage(int page, int rows, Map<String, String> param) {
+		Page<TestSubject> list = null;
+
+		if (StrKit.notBlank(param.get("majorId")) || StrKit.notBlank(param.get("name"))) {
+			list = testDao.paginate(page, rows, "select *",
+					"from test where majorId=? and name like ? order by createTime desc", param.get("majorId"),
+					"%" + param.get("name") + "%");
+		} else if (StrKit.notBlank(param.get("majorId"))) {
+			list = testDao.paginate(page, rows, "select *", "from test where majorId=? order by createTime desc",
+					param.get("majorId"));
+		} else if (StrKit.notBlank(param.get("name"))) {
+			list = testDao.paginate(page, rows, "select *", "from test where name like ? order by createTime desc",
+					"%" + param.get("name") + "%");
+		} else {
+			list = testDao.paginate(page, rows, "select *", "from test order by createTime desc");
+		}
 		if (list != null && list.getTotalRow() > 0) {
 			return Ret.ok("data", list);
 		} else {

@@ -49,4 +49,6 @@ public class UserService {
 		Record u = new Record().setColumns(map);
 		return Db.save("user", "userId", u);
 	}
+	
+	
 }

@@ -29,9 +29,9 @@ public class TestController extends BaseController {
 	public void addTestSubject() {
 
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		log.info("test:add req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
+		if (StrKit.isBlank(req) || (param == null) || StrKit.isBlank(param.get("majorId"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -55,7 +55,7 @@ public class TestController extends BaseController {
 	public void updateSubject() {
 
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		log.info(" test:update req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
 		if (StrKit.isBlank(req) || (param == null)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -104,17 +104,17 @@ public class TestController extends BaseController {
 		String req = HttpKit.readData(getRequest());
 		log.info("test list req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || StrKit.isBlank(param.get("majorId"))) {
+		if (StrKit.isBlank(req) || StrKit.isBlank(param.get("page")) || StrKit.isBlank(param.get("size"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
-		int page = getParaToInt("page");
-		int rows = getParaToInt("rows");
-		if ((page == 0) || (rows == 0)) {
+		int page = Integer.valueOf(param.get("page"));
+		int size = Integer.valueOf(param.get("size"));
+		if ((page == 0) || (size == 0)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
-		renderJson(testService.getListByPage(page, rows, param.get("majorId")));
+		renderJson(testService.getListByPage(page, size, param));
 	}
 
 }
