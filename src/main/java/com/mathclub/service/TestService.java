@@ -80,23 +80,35 @@ public class TestService {
 	public Ret getListByPage(int page, int rows, Map<String, String> param) {
 		Page<TestSubject> list = null;
 
-		if (StrKit.notBlank(param.get("majorId")) || StrKit.notBlank(param.get("name"))) {
-			list = testDao.paginate(page, rows, "select *",
-					"from test where majorId=? and name like ? order by createTime desc", param.get("majorId"),
-					"%" + param.get("name") + "%");
+		if (StrKit.notBlank(param.get("majorId")) && StrKit.notBlank(param.get("name"))) {
+			list = testDao.paginate(page, rows, "select t.*,m.name as majorName",
+					"from test t inner join major m on t.majorId = m.majorId where t.majorId=? and t.name like ? order by t.createTime desc",
+					param.get("majorId"), "%" + param.get("name") + "%");
 		} else if (StrKit.notBlank(param.get("majorId"))) {
-			list = testDao.paginate(page, rows, "select *", "from test where majorId=? order by createTime desc",
+			list = testDao.paginate(page, rows, "select t.*,m.name as majorName",
+					"from test t inner join major m on t.majorId = m.majorId where t.majorId=? order by t.createTime desc",
 					param.get("majorId"));
 		} else if (StrKit.notBlank(param.get("name"))) {
-			list = testDao.paginate(page, rows, "select *", "from test where name like ? order by createTime desc",
+			list = testDao.paginate(page, rows, "select t.*,m.name as majorName",
+					"from test t inner join major m on t.majorId = m.majorId where t.name like ? order by t.createTime desc",
 					"%" + param.get("name") + "%");
 		} else {
-			list = testDao.paginate(page, rows, "select *", "from test order by createTime desc");
+			list = testDao.paginate(page, rows, "select t.*,m.name as majorName",
+					"from test t inner join major m on t.majorId = m.majorId order by t.createTime desc");
 		}
 		if (list != null && list.getTotalRow() > 0) {
 			return Ret.ok("data", list);
 		} else {
 			return Ret.fail("msg", "没有题目信息");
+		}
+	}
+
+	public Ret findTest(String testId) {
+		Record ret = Db.findFirst("select t.*,m.name as majorName from test t inner join major m on t.majorId = m.majorId where t.id =?", testId);
+		if (ret != null) {
+			return Ret.ok("data", ret);
+		} else {
+			return Ret.fail("msg", "没有信息");
 		}
 	}
 

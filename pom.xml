@@ -93,18 +93,18 @@
 		<!-- <dependency> <groupId>com.jfinal</groupId> <artifactId>cos</artifactId> 
 			<version>26Dec2008</version> </dependency> -->
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.jfinal</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>8.1.8</version>
-			<scope>provided</scope>
+			<scope>provided</scope> -->
 			<!-- <exclusions>
 				<exclusion>
 					<artifactId>jetty-server</artifactId>
 					<groupId>org.eclipse.jetty</groupId>
 				</exclusion>
 			</exclusions> -->
-		</dependency>
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

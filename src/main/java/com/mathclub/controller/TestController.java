@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.mathclub.kit.StringKit;
@@ -37,7 +38,7 @@ public class TestController extends BaseController {
 		}
 		String name = param.get("name");
 		int majorId = Integer.valueOf(param.get("majorId"));
-		String subjectIds = param.get("subjectIdList");
+		String subjectIds = param.get("subjectIds");
 
 		log.info("name=" + name + "majorId=" + majorId + "subjectIds=" + subjectIds);
 
@@ -55,12 +56,8 @@ public class TestController extends BaseController {
 	public void updateSubject() {
 
 		String req = HttpKit.readData(getRequest());
-		log.info(" test:update req=" + req);
+		LogKit.info(" test:update req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
 		if (StrKit.isBlank(param.get("name")) || StrKit.isBlank(param.get("subjectIdList"))
 				|| StrKit.isBlank(param.get("majorId")) || StrKit.isBlank(param.get("testId"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -68,7 +65,7 @@ public class TestController extends BaseController {
 		}
 		String name = param.get("name");
 		int majorId = Integer.valueOf(param.get("majorId"));
-		String subjectIds = param.get("subjectIdList");
+		String subjectIds = param.get("subjectIds");
 		int testId = Integer.valueOf(param.get("testId"));
 
 		renderJson(testService.update(name, majorId, subjectIds, testId));
@@ -115,6 +112,19 @@ public class TestController extends BaseController {
 			return;
 		}
 		renderJson(testService.getListByPage(page, size, param));
+	}
+	
+	/**
+	 * 查找小测
+	 */
+	@ActionKey("/test:findById")
+	public void findById() {
+
+		if (StrKit.isBlank(getPara("testId"))) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		renderJson(testService.findTest(getPara("testId")));
 	}
 
 }
