@@ -22,6 +22,7 @@ public class Comment extends Model<Comment> {
 	private String pic;//图片地址
 	private String text;//评论内容
 	private int isToSys;//是否发送给管理员
+	private int parentId;//父评论ID
 	private Date createTime;//创建时间
 	
 	public int getCommentId() {
@@ -73,6 +74,11 @@ public class Comment extends Model<Comment> {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	
+	public int getParentId() {
+		return parentId;
+	}
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
 	
 }

@@ -64,16 +64,7 @@ public class CommentController extends BaseController {
 			renderJson(Ret.fail("msg", "没有该用户"));
 			return;
 		}
-		renderJson(commentService.add(userId, user.toRecord().get("nickName"), comm));
-	}
-
-	public void a() {
-		// String a = "{\"userId\":234,\"nickName\":\"liqiu\"}";
-		String a = "{\"nickName\":\"liqiu\"}";
-		User user = FastJson.getJson().parse(a, User.class);
-		// System.out.println("kkkk====" + user.getUserId());
-		System.out.println("kkkk====" + user.getNickName());
-		System.out.println("kkkk====" + user.getUserId());
+		renderJson(commentService.add(userId,user, comm));
 	}
 
 	/**
