@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.model.Comment;
 import com.mathclub.model.User;
@@ -70,5 +71,12 @@ public class CommentService {
 
 	public void queryInfo() {
 		String sql = "select c1.*,c2.commentId as reply_id,c2.text as reply_content,c2.parentId as reply_parent_id from comment c1 INNER JOIN comment c2 on c2.parentId = c1.commentId";
+	}
+	
+
+	public Page<Record> getCommentList(User user, String subjectId, int page, int size) {
+		String select = "select *";
+		String sql = "from comment where subjectId = ? order by createTime desc";
+		return Db.paginate(page, size, select, sql, subjectId);
 	}
 }

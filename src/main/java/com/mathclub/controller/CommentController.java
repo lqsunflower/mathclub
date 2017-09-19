@@ -64,7 +64,41 @@ public class CommentController extends BaseController {
 			renderJson(Ret.fail("msg", "没有该用户"));
 			return;
 		}
-		renderJson(commentService.add(userId,user, comm));
+		renderJson(commentService.add(userId, user, comm));
+	}
+
+	/**
+	 * 查询评论列表
+	 */
+	@ActionKey("/message:commentList")
+	public void findCommentList() {
+		//String req = HttpKit.readData(getRequest());
+		//log.info("message:commentList req=" + req);
+		// Comment comm = FastJson.getJson().parse(req, Comment.class);
+		String sessionId = getHeader("sessionId");
+		LogKit.info("sessionId=" + sessionId);
+
+		String subjectId = getPara("subjectId");
+		String page = getPara("page");
+		String size = getPara("size");
+		LogKit.info("message:commentList page=" + page + "--size=" + size);
+		if (StrKit.isBlank(page) || StrKit.isBlank(size)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		int userId = 0;
+		User user = null;
+		Session session = SessionService.getUserId(sessionId);
+		if (session != null) {
+			userId = session.getUserId();
+			LogKit.info("userId======" + userId);
+			user = userService.queryUserById(userId);
+			LogKit.info("name======" + user.toRecord().get("nickName"));
+		} else {
+			renderJson(Ret.fail("msg", "没有该用户"));
+			return;
+		}
+		renderJson(commentService.getCommentList(user, subjectId, Integer.valueOf(page), Integer.valueOf(size)));
 	}
 
 	/**
