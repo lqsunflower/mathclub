@@ -14,14 +14,7 @@
 
 package com.mathclub.controller;
 
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
-import com.jfinal.core.ActionKey;
-import com.jfinal.kit.Ret;
-import com.mathclub.model.Favorite;
 import com.mathclub.service.FavoriteService;
-
-import java.util.List;
 
 /**
  * 收藏控制器

@@ -15,7 +15,6 @@ import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
 import com.mathclub.service.SessionService;
 import com.mathclub.service.SubjectService;
-import com.mathclub.service.UserService;
 
 /**
  * 功能描述：
@@ -24,7 +23,6 @@ import com.mathclub.service.UserService;
 public class UserController extends BaseController {
 	private static Logger log = Logger.getLogger(UserController.class);
 	private SubjectService subjectService = new SubjectService();
-	private UserService userService = new UserService();
 
 	/**
 	 * 分页获取题目信息(包括用户的信息，点赞和点跪情况)

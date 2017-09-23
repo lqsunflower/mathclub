@@ -58,7 +58,7 @@ public class TestController extends BaseController {
 		String req = HttpKit.readData(getRequest());
 		LogKit.info(" test:update req=" + req);
 		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(param.get("name")) || StrKit.isBlank(param.get("subjectIdList"))
+		if (StrKit.isBlank(param.get("name")) || StrKit.isBlank(param.get("subjectIds"))
 				|| StrKit.isBlank(param.get("majorId")) || StrKit.isBlank(param.get("testId"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
@@ -113,7 +113,7 @@ public class TestController extends BaseController {
 		}
 		renderJson(testService.getListByPage(page, size, param));
 	}
-	
+
 	/**
 	 * 查找小测
 	 */

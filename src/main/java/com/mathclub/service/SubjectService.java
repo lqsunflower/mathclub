@@ -188,11 +188,9 @@ public class SubjectService {
 		}
 		List<SubjectVo> subs = new ArrayList<SubjectVo>();
 		for (Record record : list) {
-			System.out.println("hhhhhh" + record.toJson());
 
 			SubjectVo subVo = FastJson.getJson().parse(record.toJson(), SubjectVo.class);
 
-			System.out.println("getSubjectId " + subVo.getSubjectId());
 			int likeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 1",
 					subVo.getSubjectId());
 			int unlikeCount = Db.queryInt("select count(*) from subject_like where subjectId = ? and type = 2",

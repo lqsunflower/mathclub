@@ -5,10 +5,6 @@ package com.mathclub.controller;
 
 import org.apache.log4j.Logger;
 
-import com.mathclub.model.Major;
-import com.mathclub.model.Subject;
-import com.mathclub.service.AdminService;
-
 /**
  * @author Administrator
  *
