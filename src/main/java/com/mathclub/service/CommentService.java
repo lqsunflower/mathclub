@@ -107,4 +107,17 @@ public class CommentService {
 		map.put("isLastPage", comments.isLastPage());
 		return Ret.ok("data", map);
 	}
+
+	
+	public Ret queryMessage(User user, String type, int page, int size) {
+		String select = "select *";
+		String sql = "from comment where isToSys = ? and parentId = 0 order by createTime desc";
+		Page<Record> message = Db.paginate(page, size, select, sql, type);
+		List<Record> list = message.getList();
+		if (list == null || list.size() == 0) {
+			return Ret.fail("msg", "没有评论信息");
+		} else {
+			return Ret.ok("data", message);
+		}
+	}
 }

@@ -65,8 +65,8 @@ public class CommentController extends BaseController {
 	 */
 	@ActionKey("/message:commentList")
 	public void findCommentList() {
-		//String req = HttpKit.readData(getRequest());
-		//log.info("message:commentList req=" + req);
+		// String req = HttpKit.readData(getRequest());
+		// log.info("message:commentList req=" + req);
 		// Comment comm = FastJson.getJson().parse(req, Comment.class);
 		String sessionId = getHeader("sessionId");
 		LogKit.info("sessionId=" + sessionId);
@@ -93,55 +93,37 @@ public class CommentController extends BaseController {
 		}
 		renderJson(commentService.getCommentList(user, subjectId, Integer.valueOf(page), Integer.valueOf(size)));
 	}
-	
-	/**
-     * 查询向管理员发送消息的
-     */
-    @ActionKey("/message:queryMessage")
-    public void queryMessage() {
-        //String req = HttpKit.readData(getRequest());
-        //log.info("message:commentList req=" + req);
-        // Comment comm = FastJson.getJson().parse(req, Comment.class);
-        String sessionId = getHeader("sessionId");
-        LogKit.info("sessionId=" + sessionId);
 
-        String subjectId = getPara("subjectId");
-        String page = getPara("page");
-        String size = getPara("size");
-        LogKit.info("message:commentList page=" + page + "--size=" + size);
-        if (StrKit.isBlank(page) || StrKit.isBlank(size)) {
-            renderJson(Ret.fail("msg", "请求参数为空"));
-            return;
-        }
-        int userId = 0;
-        User user = null;
-        Session session = SessionService.getUserId(sessionId);
-        if (session != null) {
-            userId = session.getUserId();
-            LogKit.info("userId======" + userId);
-            user = userService.queryUserById(userId);
-            LogKit.info("name======" + user.toRecord().get("nickName"));
-        } else {
-            renderJson(Ret.fail("msg", "没有该用户"));
-            return;
-        }
-        renderJson(commentService.getCommentList(user, subjectId, Integer.valueOf(page), Integer.valueOf(size)));
-    }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * 查询向管理员发送消息的
+	 */
+	@ActionKey("/message:queryMessage")
+	public void queryMessage() {
+		String sessionId = getHeader("sessionId");
+		LogKit.info("sessionId=" + sessionId);
+
+		String type = getPara("type");
+		String page = getPara("page");
+		String size = getPara("size");
+		LogKit.info("message:queryMessage page=" + page + "--size=" + size);
+		if (StrKit.isBlank(page) || StrKit.isBlank(size)) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		int userId = 0;
+		User user = null;
+		Session session = SessionService.getUserId(sessionId);
+		if (session != null) {
+			userId = session.getUserId();
+			LogKit.info("userId======" + userId);
+			user = userService.queryUserById(userId);
+			LogKit.info("name======" + user.toRecord().get("nickName"));
+		} else {
+			renderJson(Ret.fail("msg", "没有该用户"));
+			return;
+		}
+		renderJson(commentService.queryMessage(user, type, Integer.valueOf(page), Integer.valueOf(size)));
+	}
 
 	/**
 	 * 修改题目
