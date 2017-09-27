@@ -20,6 +20,7 @@ public class CommentVo {
 	private int userId;// 评论用户id
 	private int subjectId;// 评论题目ID
 	private String userName;// 用户名字
+	private String headImgurl;// 用户名字
 	private String pic;// 图片地址
 	private String text;// 评论内容
 	private int isToSys;// 是否发送给管理员
@@ -106,5 +107,15 @@ public class CommentVo {
 	public void setReply(List<Record> reply) {
 		this.reply = reply;
 	}
+
+    public String getHeadImgurl()
+    {
+        return headImgurl;
+    }
+
+    public void setHeadImgurl(String headImgurl)
+    {
+        this.headImgurl = headImgurl;
+    }
 
 }
