@@ -10,8 +10,10 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.SnsApi;
+import com.mathclub.kit.GetApiConfigUtil;
 import com.mathclub.kit.IpKit;
 import com.mathclub.login.LoginController;
 import com.mathclub.login.LoginService;
@@ -37,6 +39,7 @@ public class OauthWeixinController extends Controller
     @ActionKey("/oauth")
     public void processOauthRequest()
     {
+    	ApiConfigKit.setThreadLocalApiConfig(GetApiConfigUtil.getApiConfig());
         /** 获取授权code */
         String code = getPara("code");
         /** 最终目标地址 */
@@ -87,6 +90,7 @@ public class OauthWeixinController extends Controller
         {
             // 50表示高等数学
             sb.append("&type=subject").append("&name=").append("gaoshu");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }
@@ -94,6 +98,7 @@ public class OauthWeixinController extends Controller
         {
             // 51表示线性代数
             sb.append("&type=subject").append("&name=").append("xiandai");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }
@@ -101,6 +106,7 @@ public class OauthWeixinController extends Controller
         {
             // 52表示上次浏览
             sb.append("&type=history");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }
@@ -108,6 +114,7 @@ public class OauthWeixinController extends Controller
         {
             // 53表示搜索
             sb.append("&type=search");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }
@@ -115,12 +122,14 @@ public class OauthWeixinController extends Controller
         {
             // 54：个人信息
             sb.append("&type=user");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }else if (toUrl.equals("55"))
         {
             // 55：直播
             sb.append("&type=live");
+            LogKit.info("redirect url=" + sb.toString());
             redirect(sb.toString());
             return;
         }
