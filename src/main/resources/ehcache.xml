@@ -47,7 +47,7 @@
 
         -->
     
-    <!-- 缓存登录用户信息，空闲 30 分钟则清除，否则一直保持登录状态，
+    <!-- 缓存后台管理员登录用户信息，空闲 30 分钟则清除，否则一直保持登录状态，
         登录过期时间是指 session表中的 expireAt，此缓存仅用于统计 login_log
         以及提升性能(不必总读取数据库 session 表) -->
     <cache name="loginAccount"
@@ -57,6 +57,18 @@
            timeToLiveSeconds="0"
            overflowToDisk="false"
             />
+
+ <!-- 缓存登录用户信息，空闲 30 分钟则清除，否则一直保持登录状态，
+        登录过期时间是指 session表中的 expireAt，此缓存仅用于统计 login_log
+        以及提升性能(不必总读取数据库 session 表) -->
+    <cache name="loginUser"
+           maxEntriesLocalHeap="90000"
+           eternal="false"
+           timeToIdleSeconds="1800"
+           timeToLiveSeconds="0"
+           overflowToDisk="false"
+            />
+
 
 	<!-- allAccounts 所有账号缓存，用于其它 model join 到 nickName、avatar -->
 	<cache name="allAccounts"

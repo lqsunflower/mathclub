@@ -287,6 +287,7 @@ public class SubjectService {
 		map.put("hint", param.get("hint"));
 		map.put("author", param.get("author"));
 		map.put("tags", param.get("tags"));
+		map.put("video", param.get("video"));
 		map.put("modifyTime", new Date());
 		Record record = new Record().setColumns(map);
 		boolean ret = Db.update("subject", "subjectId", record);

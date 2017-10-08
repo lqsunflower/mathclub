@@ -1,12 +1,9 @@
 package com.mathclub.login;
 
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Ret;
-import com.mathclub.kit.IpKit;
-import com.mathclub.model.Session;
 
 /**
  * 登录控制器

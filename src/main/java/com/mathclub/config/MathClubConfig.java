@@ -15,6 +15,8 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.template.Engine;
+import com.mathclub.admin.LoginController;
+import com.mathclub.common.AdminRoutes;
 import com.mathclub.controller.AdminController;
 import com.mathclub.controller.CommentController;
 import com.mathclub.controller.KeyController;
@@ -25,6 +27,8 @@ import com.mathclub.controller.SubjectAdminController;
 import com.mathclub.controller.TestController;
 import com.mathclub.controller.UploadController;
 import com.mathclub.controller.UserController;
+import com.mathclub.interceptor.LoginSessionInterceptor;
+import com.mathclub.model.Account;
 import com.mathclub.model.Comment;
 import com.mathclub.model.KeyPoint;
 import com.mathclub.model.Like;
@@ -74,6 +78,8 @@ public class MathClubConfig extends JFinalConfig {
 	 * 配置路由
 	 */
 	public void configRoute(Routes me) {
+		//me.add(new FrontRoutes());
+		//me.add(new AdminRoutes());
 		// 微信接收信息
 		me.add("/msg", MsgController.class);
 		me.add("/oauth", OauthWeixinController.class);
@@ -85,7 +91,8 @@ public class MathClubConfig extends JFinalConfig {
 		me.add("/ddd", UserController.class);
 		me.add("/test", TestController.class);
 		me.add("/comment", CommentController.class);
-		
+		me.add("/login", LoginController.class);
+
 	}
 
 	/*
@@ -115,8 +122,9 @@ public class MathClubConfig extends JFinalConfig {
 		arp.addMapping("session", "id", Session.class);
 		arp.addMapping("test", "id", TestSubject.class);
 		arp.addMapping("comment", "commentId", Comment.class);
-		
-		me.add(new EhCachePlugin());//配置缓存插件
+		arp.addMapping("account", "id", Account.class);
+
+		me.add(new EhCachePlugin());// 配置缓存插件
 	}
 
 	/*
@@ -129,7 +137,7 @@ public class MathClubConfig extends JFinalConfig {
 	 * 配置全局拦截器
 	 */
 	public void configInterceptor(Interceptors me) {
-
+		//me.add(new LoginSessionInterceptor());
 	}
 
 	/**

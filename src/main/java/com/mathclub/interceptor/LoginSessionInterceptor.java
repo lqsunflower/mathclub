@@ -16,26 +16,24 @@ import com.mathclub.model.User;
 public class LoginSessionInterceptor implements Interceptor {
 
 	public void intercept(Invocation inv) {
-        User loginAccount = null;
+        User loginUser = null;
 		Controller c = inv.getController();
-		String sessionId = c.getHeader(LoginService.sessionIdName);
+		String sessionId = c.getCookie(LoginService.sessionIdName);
 		if (sessionId != null) {
-			loginAccount = LoginService.me.getLoginAccountWithSessionId(sessionId);
-			if (loginAccount == null) {
+			loginUser = LoginService.me.getLoginAccountWithSessionId(sessionId);
+			if (loginUser == null) {
 				String loginIp = IpKit.getRealIp(c.getRequest());
-				loginAccount = LoginService.me.loginWithSessionId(sessionId, loginIp);
+				loginUser = LoginService.me.loginWithSessionId(sessionId, loginIp);
 			}
-			if (loginAccount != null) {
+			if (loginUser != null) {
 				// 用户登录账号
-				c.setAttr(LoginService.loginUserCacheName, loginAccount);
+				c.setAttr(LoginService.loginUserCacheName, loginUser);
 			} else {
 				c.removeCookie(LoginService.sessionIdName); // cookie 登录未成功，证明该 cookie 已经没有用处，删之
 			}
 		}
-
+		
 		inv.invoke();
 	}
 }
-
-
 

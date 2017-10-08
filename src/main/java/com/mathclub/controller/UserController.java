@@ -52,10 +52,47 @@ public class UserController extends BaseController {
 		String req = HttpKit.readData(getRequest());
 		LogKit.info(" user:likereq=" + req);
 		String sessionId = getHeader("sessionId");
-		
+
 		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(sessionId) || StrKit.isBlank(param.get("subjectId"))
-				|| StrKit.isBlank(param.get("type"))) {
+		if (StrKit.isBlank(sessionId) || StrKit.isBlank(param.get("subjectId")) || StrKit.isBlank(param.get("type"))) {
+			renderJson(Ret.fail("msg", "请求参数为空"));
+			return;
+		}
+		Session session = SessionService.getUserId(sessionId);
+		int userId = session.getUserId();
+		int subjectId = Integer.valueOf(param.get("subjectId"));
+		int type = Integer.valueOf(param.get("type"));
+
+		if (type == 1 || type == 2) {
+			boolean result = subjectService.checkUserExists(userId, subjectId, type);
+			if (result) {
+				renderJson(Ret.fail("msg", "该用户已经点赞或点跪"));
+				return;
+			}
+		} else {
+			renderJson(Ret.fail("msg", "类型错误"));
+			return;
+		}
+		boolean res = subjectService.like(userId, subjectId, type);
+		if (res) {
+			renderJson(Ret.ok());
+		} else {
+			renderJson(Ret.fail("msg", "数据库操作失败"));
+		}
+
+	}
+
+	/**
+	 * 收藏
+	 */
+	@ActionKey("/user:favorite")
+	public void favorite() {
+		String req = HttpKit.readData(getRequest());
+		LogKit.info("user:favorite req=" + req);
+		String sessionId = getHeader("sessionId");
+
+		Map<String, String> param = StringKit.putParamsInMap(req);
+		if (StrKit.isBlank(sessionId) || StrKit.isBlank(param.get("subjectId")) || StrKit.isBlank(param.get("type"))) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
@@ -18,14 +19,16 @@ import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.mathclub.interceptor.AdminAuthInterceptor;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.Subject;
 import com.mathclub.service.SubjectService;
 
 /**
- * 功能描述：
+ * 功能描述：题目相关操作
  *
  */
+@Before(AdminAuthInterceptor.class)//添加权限拦截
 public class SubjectAdminController extends BaseController {
 
 	private static Logger log = Logger.getLogger(SubjectAdminController.class);
@@ -74,7 +77,7 @@ public class SubjectAdminController extends BaseController {
 		String keyId = param.get("keyId");
 		log.info("name=" + name + "majorId=" + majorId + "keyId=" + keyId + "answer=" + param.get("answer"));
 
-		if (StrKit.isBlank(name) || Integer.valueOf(param.get("subjectId")) == 0 || StrKit.isBlank(name)) {
+		if (StrKit.isBlank(name) || Integer.valueOf(param.get("subjectId")) == 0) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
@@ -133,10 +136,6 @@ public class SubjectAdminController extends BaseController {
 	 */
 	@ActionKey("/subject:list")
 	public void getSubjectListByPage() {
-		/*
-		 * String req = HttpKit.readData(getRequest());
-		 * log.info("subject:list req=" + req);
-		 */
 		String keyId = getPara("keyId"); 
 		String page = getPara("page");
 		String size = getPara("size");

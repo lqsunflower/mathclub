@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.jfinal.json.FastJson;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -80,8 +82,8 @@ public class CommentService {
 	}
 
 	public Ret getCommentList(User user, String subjectId, int page, int size) {
-		String sa = "select c1.*,c2.commentId as reply_id,c2.text as reply_content,c2.parentId as reply_parent_id "
-				+ "from comment c1 INNER JOIN comment c2 on c2.parentId = c1.commentId where c2.parentId = ?";
+		String sa = "select c2.*" + "from comment c1 INNER JOIN comment c2 on c2.parentId = c1.commentId "
+				+ "where c2.parentId = ?";
 
 		String select = "select *";
 		String sql = "from comment where subjectId = ? and parentId = 0 order by createTime desc";
@@ -108,7 +110,6 @@ public class CommentService {
 		return Ret.ok("data", map);
 	}
 
-	
 	public Ret queryMessage(User user, String type, int page, int size) {
 		String select = "select *";
 		String sql = "from comment where isToSys = ? and parentId = 0 order by createTime desc";
@@ -118,6 +119,49 @@ public class CommentService {
 			return Ret.fail("msg", "没有评论信息");
 		} else {
 			return Ret.ok("data", message);
+		}
+
+	}
+
+	public Ret delete(User user, int commnetId) {
+		Db.update("delete from comment where commentId = ?", commnetId);
+		Db.update("delete from comment where parentId = ?", commnetId);
+		return Ret.ok().create("msg", "删除成功");
+	}
+
+	public Page<Record> find(User user, String subjectId, String userName, String text, Integer pageNum,
+			Integer pageSize) {
+		String select = "select *";
+		LogKit.info("subjentidd=" + subjectId + "dsd=" + userName + "text=" + text);
+		if (StrKit.notBlank(subjectId)) {
+			if (StrKit.notBlank(userName) && StrKit.notBlank(text)) {
+				String sql = "from comment where subjectId = ? and userName = ? and text like ? order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, subjectId, userName, "%" + text + "%");
+			} else if (StrKit.notBlank(userName)) {
+				String sql = "from comment where subjectId = ? and userName = ? order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, subjectId, userName);
+			} else if (StrKit.notBlank(text)) {
+				String sql = "from comment where subjectId = ? and text like ?  order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, subjectId, "%" + text + "%");
+			} else {
+				String sql = "from comment where subjectId = ? order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, subjectId);
+			}
+		}
+		if (StrKit.notBlank(userName)) {
+			if (StrKit.notBlank(text)) {
+				String sql = "from comment where userName = ? and text like ?  order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, userName, "%" + text + "%");
+			} else {
+				String sql = "from comment where userName = ? order by createTime desc";
+				return Db.paginate(pageNum, pageSize, select, sql, userName);
+			}
+		} else if (StrKit.notBlank(text)) {
+			String sql = "from comment where text like ? order by createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql, "%" + text + "%");
+		} else {
+			String sql = "from comment order by createTime desc";
+			return Db.paginate(pageNum, pageSize, select, sql);
 		}
 	}
 }

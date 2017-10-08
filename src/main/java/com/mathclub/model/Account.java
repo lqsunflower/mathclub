@@ -1,31 +1,15 @@
-/**
- * 
- */
 package com.mathclub.model;
 
-import com.jfinal.plugin.activerecord.Model;
+import com.mathclub.model.base.BaseAccount;
 
 /**
- * @author Administrator
- *
+ * Account
  */
-public class Account extends Model<Account>{
+public class Account extends BaseAccount<Account> {
+	private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = -3191132139411674149L;
-	private int accountId;//用户ID
-	private String userName;//名字
-	
-	public int getAccountId() {
-		return accountId;
+	public Account removeSensitiveInfo() {
+		remove("password", "salt");
+		return this;
 	}
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 }
