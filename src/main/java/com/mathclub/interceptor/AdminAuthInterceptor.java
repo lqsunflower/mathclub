@@ -48,10 +48,10 @@ public class AdminAuthInterceptor implements Interceptor {
 			if (isAdmin(loginAccount)) {
 				inv.invoke();
 			} else {
-				inv.getController().renderJson(Ret.fail("msg", "没有管理员权限"));
+				inv.getController().renderJson(Ret.fail("msg", "没有管理员权限").set("code", "666"));
 			}
 		} else {
-			inv.getController().renderJson(Ret.fail("msg", "没有管理员权限"));
+			inv.getController().renderJson(Ret.fail("msg", "没有管理员权限").set("code","666"));
 		}
 	}
 }

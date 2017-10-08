@@ -314,4 +314,25 @@ public class SubjectService {
 	public List<Subject> searchSubjectListByName(String name) {
 		return subjectDao.find("select * from subject where name like ?", "%" + name + "%");
 	}
+
+	/**
+	 * 收藏
+	 * @param userId
+	 * @param majorId
+	 * @param subjectId
+	 * @param type
+	 * @return
+	 */
+	public boolean favorite(int userId, int majorId, int subjectId) {
+		Record re = Db.findFirst("select * from subject where subjectId=? limit 1", subjectId);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("subjectId", subjectId);
+		map.put("userId", userId);
+		map.put("subjectName", re.get("name"));
+		map.put("majorId", majorId);
+		map.put("type", 3);
+		map.put("createTime", new Date());
+		Record record = new Record().setColumns(map);
+		return Db.save("subject_like", "id", record);
+	}
 }

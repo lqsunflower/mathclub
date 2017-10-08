@@ -83,18 +83,14 @@ public class LoginService {
 	 *     如果没过期则先放缓存一份，然后再返回
 	 */
 	public Account loginWithSessionId(String sessionId, String loginIp) {
-		System.out.println("-------------zzz-------------");
 		Session session = Session.dao.findById(sessionId);
 		if (session == null) {      // session 不存在
-			System.out.println("----------66666----------------");
 			return null;
 		}
 		if (session.isExpired()) {  // session 已过期
 			session.delete();		// 被动式删除过期数据，此外还需要定时线程来主动清除过期数据
 			return null;
 		}
-		
-		System.out.println("--------------------------");
 		Account loginAccount = accountDao.findById(session.getUserId());
 		// 找到 loginAccount 并且 是正常状态 才允许登录
 		if (loginAccount != null) {
