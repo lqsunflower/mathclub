@@ -40,7 +40,8 @@ public class OauthWeixinController extends Controller {
 
 	@ActionKey("/oauth")
 	public void processOauthRequest() {
-		ApiConfigKit.setThreadLocalApiConfig(GetApiConfigUtil.getApiConfig());
+	    //ApiConfigKit.putApiConfig(GetApiConfigUtil.getApiConfig());
+		//ApiConfigKit.setThreadLocalApiConfig(GetApiConfigUtil.getApiConfig());
 		/** 获取授权code */
 		String code = getPara("code");
 		/** 最终目标地址 */
@@ -82,7 +83,8 @@ public class OauthWeixinController extends Controller {
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(PropKit.get("url"));
-		sb.append("?o=").append(openId).append("&n=").append(name);
+		sb.append("?u=").append(user.toRecord().getStr("userId"));
+		sb.append("&n=").append(name);
 		sb.append("&h=").append(headImgurl);
 		sb.append("&sessionId=").append(ret.getStr(LoginService.sessionIdName));
 		if (toUrl.equals("50")) {

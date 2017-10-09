@@ -19,7 +19,9 @@ public class Like extends Model<Like>
 {
     private static final long serialVersionUID = -1786518225610940000L;
     private int subjectId;//题目id
+    private int majorId;//题目id
     private int userId;//用户id
+    private int subjectName;//用户id
     private int type;//类型 1:点赞 2：点跪
     private Date createTime;//创建时间
     

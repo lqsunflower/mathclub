@@ -17,6 +17,8 @@ public class Subject extends Model<Subject> {
 	private static final long serialVersionUID = 4489464881060983346L;
 	private int subjectId;//题目id
 	private int keyId;//所属知识点id
+	private String keyName;//知识点名字
+	private String majorName;//学科名字
 	private int majorId;//所属学科id
 	private String name;//题目名称
 	private String pic;//题目图片地址
@@ -31,7 +33,23 @@ public class Subject extends Model<Subject> {
 	private Date createTime;//创建时间
 	private Date modifyTime;//修改时间
 	
-	public String getVideo() {
+	public String getKeyName()
+    {
+        return keyName;
+    }
+    public void setKeyName(String keyName)
+    {
+        this.keyName = keyName;
+    }
+    public String getMajorName()
+    {
+        return majorName;
+    }
+    public void setMajorName(String majorName)
+    {
+        this.majorName = majorName;
+    }
+    public String getVideo() {
 		return video;
 	}
 	public void setVideo(String video) {

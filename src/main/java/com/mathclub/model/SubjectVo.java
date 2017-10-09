@@ -20,6 +20,7 @@ public class SubjectVo
     private int majorId;//所属学科id
     private String name;//题目名称
     private String keyName;//知识点名称
+    private String majorName;//学科名字
     private String pic;//题目图片地址
     private String apic;//答案图片地址
     private int hide;//是否隐藏
@@ -34,7 +35,14 @@ public class SubjectVo
     private boolean[] userSign;//[是否点赞,是否点跪]
     private int[] sign;//[点赞人数,是否点跪]
     
-    
+    public String getMajorName()
+    {
+        return majorName;
+    }
+    public void setMajorName(String majorName)
+    {
+        this.majorName = majorName;
+    }
     public String getVideo() {
 		return video;
 	}

@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
@@ -38,6 +39,7 @@ public class SubjectAdminController extends BaseController {
 	/**
 	 * 添加题目
 	 */
+	@Clear
 	@ActionKey("/subject:add")
 	public void addSubject() {
 		String req = HttpKit.readData(getRequest());

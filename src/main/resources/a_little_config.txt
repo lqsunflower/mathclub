@@ -8,3 +8,5 @@ token=mathclub
 url=http://macjlb.com/#/jump
 
 admin=mathclub
+
+encryptMessage=false

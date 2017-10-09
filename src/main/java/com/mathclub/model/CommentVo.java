@@ -19,6 +19,9 @@ public class CommentVo {
 	private int commentId;// 评论id
 	private int userId;// 评论用户id
 	private int subjectId;// 评论题目ID
+	private String subjectName;//题目名字
+	private String keyName;//知识点名字
+    private String majorName;//学科名字
 	private String userName;// 用户名字
 	private String headImgurl;// 用户名字
 	private String pic;// 图片地址
@@ -28,7 +31,37 @@ public class CommentVo {
 	private List<Record> reply;// 回复的内容
 	private Date createTime;// 创建时间
 
-	public int getCommentId() {
+	public String getSubjectName()
+    {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName)
+    {
+        this.subjectName = subjectName;
+    }
+
+    public String getKeyName()
+    {
+        return keyName;
+    }
+
+    public void setKeyName(String keyName)
+    {
+        this.keyName = keyName;
+    }
+
+    public String getMajorName()
+    {
+        return majorName;
+    }
+
+    public void setMajorName(String majorName)
+    {
+        this.majorName = majorName;
+    }
+
+    public int getCommentId() {
 		return commentId;
 	}
 

@@ -17,6 +17,7 @@ public class KeyPoint extends Model<KeyPoint>{
 	private int keyId;//知识点ID
 	private int majorId;//学科id
 	private String name;//知识点名字
+	private String majorName;//学科名字
 	
 	public int getKeyId() {
 		return keyId;
@@ -36,5 +37,12 @@ public class KeyPoint extends Model<KeyPoint>{
 	public void setName(String name) {
 		this.name = name;
 	}
-
+    public String getMajorName()
+    {
+        return majorName;
+    }
+    public void setMajorName(String majorName)
+    {
+        this.majorName = majorName;
+    }
 }

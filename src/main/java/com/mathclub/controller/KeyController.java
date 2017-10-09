@@ -15,11 +15,13 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.KeyPoint;
+import com.mathclub.model.Major;
 
 public class KeyController extends BaseController {
 
 	private static Logger log = Logger.getLogger(KeyController.class);
 	private final KeyPoint keyDao = new KeyPoint().dao();
+	public static final Major majorDao = new Major().dao();
 
 	/**
 	 * 添加知识点
@@ -41,7 +43,8 @@ public class KeyController extends BaseController {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;
 		}
-		Record record = new Record().set("name", name).set("majorId", majorId);
+		Major major = majorDao.findFirst("select * from major where majorId = ?", majorId);
+		Record record = new Record().set("name", name).set("majorId", majorId).set("majorName", major.get("name"));
 		boolean res = Db.save("keypoint", "keyId", record);
 		if (res) {
 			Map<String, Object> map = new HashMap<String, Object>();

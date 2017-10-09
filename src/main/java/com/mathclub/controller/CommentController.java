@@ -101,7 +101,6 @@ public class CommentController extends BaseController {
 	public void queryMessage() {
 		String sessionId = getHeader("sessionId");
 		LogKit.info("message:queryMessage sessionId=" + sessionId);
-
 		String type = getPara("type");
 		String page = getPara("page");
 		String size = getPara("size");
@@ -129,7 +128,7 @@ public class CommentController extends BaseController {
 			renderJson(commentService.queryMessage(user, type, Integer.valueOf(page), Integer.valueOf(size)));
 		} else {
 			renderJson(
-					commentService.find(user, subjectId, userName, text, Integer.valueOf(page), Integer.valueOf(size)));
+					commentService.adminQuery(user, subjectId, userName, text, Integer.valueOf(page), Integer.valueOf(size)));
 		}
 
 	}
