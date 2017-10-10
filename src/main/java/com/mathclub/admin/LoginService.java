@@ -70,7 +70,6 @@ public class LoginService {
 	}
 
 	public Account getLoginAccountWithSessionId(String sessionId) {
-		System.out.println("9999999999");
 		return CacheKit.get(loginAccountCacheName, sessionId);
 	}
 

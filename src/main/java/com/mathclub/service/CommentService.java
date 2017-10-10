@@ -33,6 +33,7 @@ public class CommentService
     {
         String nickName = user.toRecord().get("nickName");
         String headImgurl = user.toRecord().get("headImgurl");
+        Record re = Db.findFirst("select * from subject where subjectId = ?", comm.getSubjectId());
         if (comm.getCommentId() == 0)
         {
             // 如果没有commentId表示是第一条评论
@@ -40,6 +41,7 @@ public class CommentService
             map.put("subjectId", comm.getSubjectId());
             map.put("pic", comm.getPic());
             map.put("userName", nickName);
+            map.put("subjectName", re.get("name"));
             map.put("headImgurl", headImgurl);
             map.put("userId", userId);
             map.put("text", comm.getText());
@@ -66,6 +68,7 @@ public class CommentService
             map.put("subjectId", comm.getSubjectId());
             map.put("pic", comm.getPic());
             map.put("userName", nickName);
+            map.put("subjectName", re.get("name"));
             map.put("headImgurl", headImgurl);
             map.put("userId", userId);
             map.put("text", comm.getText());
@@ -124,13 +127,15 @@ public class CommentService
         map.put("totalRow", comments.getTotalRow());
         map.put("isFirstPage", comments.isFirstPage());
         map.put("isLastPage", comments.isLastPage());
+        map.put("pageNumber", comments.getPageNumber());
         return Ret.ok("data", map);
     }
 
-    public Ret queryMessage(User user, String type, int page, int size)
+    public Ret queryMessage(String type, int page, int size)
     {
         String select = "select *";
         String sql = "from comment where isToSys = ? and parentId = 0 order by createTime desc";
+        String sa = "select * from subject where subjectId = ?";
         Page<Record> message = Db.paginate(page, size, select, sql, type);
         List<Record> list = message.getList();
         if (list == null || list.size() == 0)
@@ -139,7 +144,25 @@ public class CommentService
         }
         else
         {
-            return Ret.ok("data", message);
+            List<CommentVo> coms = new ArrayList<CommentVo>();
+            for (Record record : list)
+            {
+                CommentVo comVo = FastJson.getJson().parse(record.toJson(),
+                    CommentVo.class);
+                Record rec = Db.findFirst(sa, comVo.getSubjectId());
+                comVo.setSubjectName(rec.get("name"));
+                comVo.setMajorName(rec.get("majorName"));
+                comVo.setKeyName(rec.get("keyName"));
+                coms.add(comVo);
+            }
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("list", coms);
+            map.put("totalPage", message.getTotalPage());
+            map.put("totalRow", message.getTotalRow());
+            map.put("isFirstPage", message.isFirstPage());
+            map.put("isLastPage", message.isLastPage());
+            map.put("pageNumber", message.getPageNumber());
+            return Ret.ok("data", map);
         }
 
     }
@@ -151,39 +174,39 @@ public class CommentService
         return Ret.ok("msg", "删除成功");
     }
 
-    public Page<Record> find(User user, String subjectId, String userName,
+    public Page<Record> find(String subjectName, String userName,
         String text, Integer pageNum, Integer pageSize)
     {
         String select = "select *";
-        LogKit.info("subjentidd=" + subjectId + "dsd=" + userName + "text="
+        LogKit.info("select comment subjectId=" + subjectName + "userName=" + userName + "text="
             + text);
-        if (StrKit.notBlank(subjectId))
+        if (StrKit.notBlank(subjectName))
         {
             if (StrKit.notBlank(userName) && StrKit.notBlank(text))
             {
-                String sql = "from comment where subjectId = ? and userName = ? and text like ? order by createTime desc";
-                return Db.paginate(pageNum, pageSize, select, sql, subjectId,
+                String sql = "from comment where subjectName = ? and userName = ? and text like ? order by createTime desc";
+                return Db.paginate(pageNum, pageSize, select, sql, subjectName,
                     userName, "%" + text + "%");
             }
             else if (StrKit.notBlank(userName))
             {
-                String sql = "from comment where subjectId = ? and userName = ? order by createTime desc";
-                return Db.paginate(pageNum, pageSize, select, sql, subjectId,
+                String sql = "from comment where subjectName = ? and userName = ? order by createTime desc";
+                return Db.paginate(pageNum, pageSize, select, sql, subjectName,
                     userName);
             }
             else if (StrKit.notBlank(text))
             {
-                String sql = "from comment where subjectId = ? and text like ?  order by createTime desc";
-                return Db.paginate(pageNum, pageSize, select, sql, subjectId,
+                String sql = "from comment where subjectName = ? and text like ?  order by createTime desc";
+                return Db.paginate(pageNum, pageSize, select, sql, subjectName,
                     "%" + text + "%");
             }
             else
             {
-                String sql = "from comment where subjectId = ? order by createTime desc";
-                return Db.paginate(pageNum, pageSize, select, sql, subjectId);
+                String sql = "from comment where subjectName = ? order by createTime desc";
+                return Db.paginate(pageNum, pageSize, select, sql, subjectName);
             }
         }
-        if (StrKit.notBlank(userName))
+        else if (StrKit.notBlank(userName))
         {
             if (StrKit.notBlank(text))
             {
@@ -200,8 +223,7 @@ public class CommentService
         else if (StrKit.notBlank(text))
         {
             String sql = "from comment where text like ? order by createTime desc";
-            return Db
-                .paginate(pageNum, pageSize, select, sql, "%" + text + "%");
+            return Db.paginate(pageNum, pageSize, select, sql, "%" + text + "%");
         }
         else
         {
@@ -210,10 +232,10 @@ public class CommentService
         }
     }
 
-    public Ret adminQuery(User user, String subjectId, String userName,
+    public Ret adminQuery(String subjectName, String userName,
         String text, Integer pageNum, Integer pageSize)
     {
-        Page<Record> comments = find(user, subjectId, userName, text, pageNum,
+        Page<Record> comments = find(subjectName, userName, text, pageNum,
             pageSize);
         String sql = "select * from subject where subjectId = ?";
         List<Record> list = comments.getList();
@@ -229,7 +251,6 @@ public class CommentService
                 CommentVo comVo = FastJson.getJson().parse(record.toJson(),
                     CommentVo.class);
                 Record rec = Db.findFirst(sql, comVo.getSubjectId());
-                comVo.setSubjectName(rec.get("name"));
                 comVo.setMajorName(rec.get("majorName"));
                 comVo.setKeyName(rec.get("keyName"));
                 coms.add(comVo);
@@ -240,6 +261,7 @@ public class CommentService
             map.put("totalRow", comments.getTotalRow());
             map.put("isFirstPage", comments.isFirstPage());
             map.put("isLastPage", comments.isLastPage());
+            map.put("pageNumber", comments.getPageNumber());
             return Ret.ok("data", map);
         }
     }

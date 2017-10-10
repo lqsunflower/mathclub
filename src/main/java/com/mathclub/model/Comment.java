@@ -19,13 +19,22 @@ public class Comment extends Model<Comment> {
 	private int userId;//评论用户id
 	private int subjectId;//评论题目ID
 	private String userName;//用户名字
+	private String subjectName;//题目名字
 	private String pic;//图片地址
 	private String text;//评论内容
 	private int isToSys;//是否发送给管理员
 	private int parentId;//父评论ID
 	private Date createTime;//创建时间
 	
-	public int getCommentId() {
+	public String getSubjectName()
+    {
+        return subjectName;
+    }
+    public void setSubjectName(String subjectName)
+    {
+        this.subjectName = subjectName;
+    }
+    public int getCommentId() {
 		return commentId;
 	}
 	public void setCommentId(int commentId) {

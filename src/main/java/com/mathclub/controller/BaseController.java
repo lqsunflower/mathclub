@@ -1,8 +1,12 @@
 package com.mathclub.controller;
 
 import com.jfinal.core.Controller;
+import com.jfinal.kit.Ret;
+import com.mathclub.kit.IpKit;
 import com.mathclub.login.LoginService;
+import com.mathclub.model.Session;
 import com.mathclub.model.User;
+import com.mathclub.service.SessionService;
 
 /**
  * 基础控制器，方便获取登录信息
@@ -19,10 +23,25 @@ public class BaseController extends Controller {
 
 	public User getLoginAccount() {
 		if (loginUser == null) {
-			loginUser = getAttr(LoginService.loginUserCacheName);
-			if (loginUser != null) {
-				throw new IllegalStateException("当前用户状态不允许登录，status = ");
-			}
+		    String sessionId = getCookie(LoginService.loginUserCacheName);
+			//loginUser = getAttr(LoginService.loginUserCacheName);
+			/*if (sessionId != null) {
+	            loginAccount = LoginService.me.getLoginAccountWithSessionId(sessionId);
+	            if (loginAccount == null) {
+	                String loginIp = IpKit.getRealIp(c.getRequest());
+	                loginAccount = LoginService.me.loginWithSessionId(sessionId, loginIp);
+	            }*/
+		
+		      Session session = SessionService.getUserId(sessionId);
+		      int userId = 0;
+		      if (session != null)
+		      {
+		          userId = session.getUserId();
+		      }
+		      else
+		      {
+		          renderJson(Ret.fail("msg", "没有该用户"));
+		      }
 		}
 		return loginUser;
 	}
@@ -43,6 +62,7 @@ public class BaseController extends Controller {
 	public int getLoginAccountId() {
 		return getLoginAccount().getUserId();
 	}
+	
 }
 
 
