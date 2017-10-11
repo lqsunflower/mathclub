@@ -29,7 +29,7 @@ import com.mathclub.service.SubjectService;
  * 功能描述：题目相关操作
  *
  */
-@Before(AdminAuthInterceptor.class)//添加权限拦截
+@Before(AdminAuthInterceptor.class)//添加后台权限拦截
 public class SubjectAdminController extends BaseController {
 
 	private static Logger log = Logger.getLogger(SubjectAdminController.class);
@@ -39,7 +39,6 @@ public class SubjectAdminController extends BaseController {
 	/**
 	 * 添加题目
 	 */
-	@Clear
 	@ActionKey("/subject:add")
 	public void addSubject() {
 		String req = HttpKit.readData(getRequest());
@@ -112,6 +111,7 @@ public class SubjectAdminController extends BaseController {
 	/**
 	 * (后台管理)根据题目ID获取题目信息
 	 */
+	@Clear
 	@ActionKey("/subject:findById")
 	public void getSubjectInfoById() {
 

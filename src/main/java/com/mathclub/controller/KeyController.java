@@ -31,7 +31,6 @@ public class KeyController extends BaseController
     @ActionKey("/math:addKey")
     public void addKey()
     {
-
         User user = getLoginUser();
         if (user == null)
         {

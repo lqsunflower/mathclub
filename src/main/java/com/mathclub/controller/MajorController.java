@@ -5,12 +5,15 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.mathclub.interceptor.AdminAuthInterceptor;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.Major;
 
@@ -18,23 +21,21 @@ import com.mathclub.model.Major;
  * @author lq
  *
  */
+@Before(AdminAuthInterceptor.class)//添加后台权限拦截
 public class MajorController extends BaseController {
-	private static Logger log = Logger.getLogger(MajorController.class);
 
 	public static final Major majorDao = new Major().dao();
 
 	// 添加学科
 	@ActionKey("/math:addMajor")
 	public void addMajor() {
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> map = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (map == null)) {
+		String name = getPara("name");
+		LogKit.info("math:addMajor req name=" + name);
+		if (StrKit.isBlank(name)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
-
-		Record record = new Record().set("name", map.get("name"));
+		Record record = new Record().set("name", name);
 		boolean res = Db.save("major", "majorId", record);
 		if (res) {
 			renderJson(Ret.ok("msg", "添加学科成功").set("majorId", record.get("majorId")));
@@ -43,25 +44,16 @@ public class MajorController extends BaseController {
 			renderJson(Ret.fail("msg", "添加学科失败"));
 			return;
 		}
-
 	}
 
 	// 修改学科
 	@ActionKey("/math:updateMajor")
 	public void updateMajor() {
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> map = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (map == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		
-		String name = map.get("name");
-		String majorId = map.get("majorId");
-		log.info("name=" + name + "|majorId=" + majorId);
+		String name = getPara("name");
+		String majorId = getPara("majorId");
+		LogKit.info("math:updateMajor req majorId=" + majorId + "|name=" + name);
 		if (StrKit.isBlank(name) || StrKit.isBlank(majorId)) {
-			renderJson(Ret.fail("msg", "请求参数错误"));
+			renderJson(Ret.fail("msg", "请求参数为空"));
 			return;
 		}
 		int result = Db.update("update major set name=? where majorId=? ", name, majorId);
@@ -78,7 +70,7 @@ public class MajorController extends BaseController {
 	@ActionKey("/math:deleteMajor")
 	public void deleteMajor() {
 		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
+		LogKit.info("req=" + req);
 		Map<String, String> map = StringKit.putParamsInMap(req);
 		if (StrKit.isBlank(req) || (map == null)) {
 			renderJson(Ret.fail("msg", "请求参数为空"));
@@ -86,7 +78,7 @@ public class MajorController extends BaseController {
 		}
 		
 		String majorId = map.get("majorId");
-		log.info("|majorId=" + majorId);
+		LogKit.info("|majorId=" + majorId);
 		if (StrKit.isBlank(majorId)) {
 			renderJson(Ret.fail("msg", "请求参数错误"));
 			return;
