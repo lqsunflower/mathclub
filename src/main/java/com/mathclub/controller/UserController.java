@@ -13,6 +13,7 @@ import com.jfinal.kit.StrKit;
 import com.mathclub.kit.StringKit;
 import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
+import com.mathclub.model.User;
 import com.mathclub.service.SessionService;
 import com.mathclub.service.SubjectService;
 
@@ -22,7 +23,6 @@ import com.mathclub.service.SubjectService;
  */
 public class UserController extends BaseController
 {
-    private static Logger log = Logger.getLogger(UserController.class);
     private SubjectService subjectService = new SubjectService();
 
     /**
@@ -31,20 +31,16 @@ public class UserController extends BaseController
     @ActionKey("/subject:querySubjectInfoByPage")
     public void querySubjectInfoByPage()
     {
-        log.info("subject:querySubjectInfoByPage request name =" + getPara("keyId"));
-        String sessionId = getHeader("sessionId");
-        Session session = SessionService.getUserId(sessionId);
-        int userId = 0;
-        if (session != null)
+        User user = getLoginUser();
+        if (user == null)
         {
-            userId = session.getUserId();
-        }
-        else
-        {
+            LogKit.error("subject:querySubjectInfoByPage  user is null");
             renderJson(Ret.fail("msg", "没有该用户"));
             return;
         }
-        Ret ret = subjectService.querySubjectInfo(userId,
+        LogKit.info("subject:querySubjectInfoByPage request name ="
+            + getPara("keyId"));
+        Ret ret = subjectService.querySubjectInfo(user.get("userId"),
             getParaToInt("keyId"), getParaToInt("page", 1),
             getParaToInt("size"));
         renderJson(ret);
@@ -56,26 +52,27 @@ public class UserController extends BaseController
     @ActionKey("/user:like")
     public void likeSubject()
     {
-        String req = HttpKit.readData(getRequest());
-        LogKit.info(" user:like req=" + req);
-        String sessionId = getHeader("sessionId");
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("user:like  user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
 
-        Map<String, String> param = StringKit.putParamsInMap(req);
-        if (StrKit.isBlank(sessionId) || StrKit.isBlank(param.get("subjectId"))
-            || StrKit.isBlank(param.get("type")))
+        if (StrKit.isBlank(getPara("subjectId"))
+            || StrKit.isBlank(getPara("type")))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        Session session = SessionService.getUserId(sessionId);
-        int userId = session.getUserId();
-        int subjectId = Integer.valueOf(param.get("subjectId"));
-        int type = Integer.valueOf(param.get("type"));
+        int subjectId = Integer.valueOf(getPara("subjectId"));
+        int type = Integer.valueOf(getPara("type"));
 
         if (type == 1 || type == 2)
         {
-            boolean result = subjectService.checkUserExists(userId, subjectId,
-                type);
+            boolean result = subjectService.checkUserExists(user.get("userId"),
+                subjectId, type);
             if (result)
             {
                 renderJson(Ret.fail("msg", "该用户已经点赞或点跪"));
@@ -87,10 +84,10 @@ public class UserController extends BaseController
             renderJson(Ret.fail("msg", "类型错误"));
             return;
         }
-        boolean res = subjectService.like(userId, subjectId, type);
-        if (res)
+        int res = subjectService.like(user.get("userId"), subjectId, type);
+        if (res > 0)
         {
-            renderJson(Ret.ok());
+            renderJson(Ret.ok("msg", "点赞成功"));
         }
         else
         {
@@ -105,24 +102,27 @@ public class UserController extends BaseController
     @ActionKey("/user:favorite")
     public void favorite()
     {
-        String req = HttpKit.readData(getRequest());
-        LogKit.info("user:favorite req=" + req);
-        String sessionId = getHeader("sessionId");
-
-        Map<String, String> param = StringKit.putParamsInMap(req);
-        if (StrKit.isBlank(sessionId) || StrKit.isBlank(param.get("subjectId")))
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("user:favorite user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
+        LogKit.info("user:favorite req=" + getPara("subjectId") + "|majorId="
+            + getPara("majorId"));
+        String subjectId = getPara("subjectId");
+        String majorId = getPara("majorId");
+        if (StrKit.isBlank(subjectId) || (StrKit.isBlank(majorId)))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        Session session = SessionService.getUserId(sessionId);
-        int userId = session.getUserId();
-        int subjectId = Integer.valueOf(param.get("subjectId"));
-        int majorId = Integer.valueOf(param.get("majorId"));
-        boolean res = subjectService.favorite(userId, majorId, subjectId);
+        boolean res = subjectService.favorite(user.get("userId"),
+            Integer.valueOf(majorId), Integer.valueOf(subjectId));
         if (res)
         {
-            renderJson(Ret.ok());
+            renderJson(Ret.ok("msg", "成功"));
         }
         else
         {
@@ -137,18 +137,23 @@ public class UserController extends BaseController
     @ActionKey("/user:cancelFavorite")
     public void cancelFavorite()
     {
-        LogKit.info("user:cancelFavorite req=" + getPara("subjectId"));
-        String sessionId = getHeader("sessionId");
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("user:cancelFavorite user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
 
-        int subjectId = Integer.valueOf(getPara("subjectId"));
-        if (StrKit.isBlank(sessionId) || (subjectId == 0))
+        LogKit.info("user:cancelFavorite req=" + getPara("subjectId"));
+        String subjectId = getPara("subjectId");
+        if (StrKit.isBlank(subjectId) || (Integer.valueOf(subjectId) == 0))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        Session session = SessionService.getUserId(sessionId);
-        int userId = session.getUserId();
-        int res = subjectService.deleteFavorite(userId, subjectId);
+        int res = subjectService.deleteFavorite(user.get("userId"),
+            Integer.valueOf(subjectId));
         if (res > 0)
         {
             renderJson(Ret.ok("msg", "成功"));
@@ -166,18 +171,21 @@ public class UserController extends BaseController
     @ActionKey("/user:favoriteList")
     public void list()
     {
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("user:favoriteList user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
         LogKit.info("user:favoriteList req=" + getPara("subjectId"));
-        String sessionId = getHeader("sessionId");
-
-        int majorId = Integer.valueOf(getPara("majorId"));
-        if (StrKit.isBlank(sessionId) || (majorId == 0))
+        Integer majorId = getParaToInt("majorId");
+        if ((majorId == null) || (majorId == 0))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        Session session = SessionService.getUserId(sessionId);
-        int userId = session.getUserId();
-        renderJson(subjectService.listFavorite(userId, majorId));
+        renderJson(subjectService.listFavorite(user.get("userId"), majorId));
     }
 
     /**
@@ -201,23 +209,25 @@ public class UserController extends BaseController
     @ActionKey("/user:searchByName")
     public void searchSubjectListByName()
     {
-
-        String req = HttpKit.readData(getRequest());
-        log.info("req=" + req);
-        Map<String, String> param = StringKit.putParamsInMap(req);
-        if (StrKit.isBlank(req) || (param == null))
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("user:searchByName user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
+        String name = getPara("name");
+        LogKit.info("user:searchByName req =" + name);
+        if (StrKit.isBlank(name))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        String name = param.get("name");
-
-        log.info("search subject list request name =" + name);
         List<Subject> subjectList = subjectService
             .searchSubjectListByName(name);
         if (subjectList != null && subjectList.size() > 0)
         {
-            renderJson(Ret.create("status", "ok").set("data", subjectList));
+            renderJson(Ret.ok("data", subjectList));
         }
         else
         {

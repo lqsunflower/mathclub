@@ -97,7 +97,7 @@ public class LoginService {
 			loginAccount.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
 			CacheKit.put(loginAccountCacheName, sessionId, loginAccount);
 
-			createLoginLog(loginAccount.getId(), loginIp);
+			//createLoginLog(loginAccount.getId(), loginIp);
 			return loginAccount;
 		}
 		return null;

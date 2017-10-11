@@ -33,7 +33,8 @@ public class CommentService
     {
         String nickName = user.toRecord().get("nickName");
         String headImgurl = user.toRecord().get("headImgurl");
-        Record re = Db.findFirst("select * from subject where subjectId = ?", comm.getSubjectId());
+        Record re = Db.findFirst("select * from subject where subjectId = ?",
+            comm.getSubjectId());
         if (comm.getCommentId() == 0)
         {
             // 如果没有commentId表示是第一条评论
@@ -169,17 +170,18 @@ public class CommentService
 
     public Ret delete(User user, int commnetId)
     {
-        Db.update("delete from comment where commentId = ?", commnetId);
+        Db.update("delete from comment where commentId = ? and userId = ?",
+            commnetId, user.get("userId"));
         Db.update("delete from comment where parentId = ?", commnetId);
         return Ret.ok("msg", "删除成功");
     }
 
-    public Page<Record> find(String subjectName, String userName,
-        String text, Integer pageNum, Integer pageSize)
+    public Page<Record> find(String subjectName, String userName, String text,
+        Integer pageNum, Integer pageSize)
     {
         String select = "select *";
-        LogKit.info("select comment subjectId=" + subjectName + "userName=" + userName + "text="
-            + text);
+        LogKit.info("select comment subjectId=" + subjectName + "userName="
+            + userName + "text=" + text);
         if (StrKit.notBlank(subjectName))
         {
             if (StrKit.notBlank(userName) && StrKit.notBlank(text))
@@ -223,7 +225,8 @@ public class CommentService
         else if (StrKit.notBlank(text))
         {
             String sql = "from comment where text like ? order by createTime desc";
-            return Db.paginate(pageNum, pageSize, select, sql, "%" + text + "%");
+            return Db
+                .paginate(pageNum, pageSize, select, sql, "%" + text + "%");
         }
         else
         {
@@ -232,8 +235,8 @@ public class CommentService
         }
     }
 
-    public Ret adminQuery(String subjectName, String userName,
-        String text, Integer pageNum, Integer pageSize)
+    public Ret adminQuery(String subjectName, String userName, String text,
+        Integer pageNum, Integer pageSize)
     {
         Page<Record> comments = find(subjectName, userName, text, pageNum,
             pageSize);
@@ -264,5 +267,21 @@ public class CommentService
             map.put("pageNumber", comments.getPageNumber());
             return Ret.ok("data", map);
         }
+    }
+
+    /**
+     * 批量删除评论信息
+     * @param user
+     * @param commentIds
+     * @return
+     */
+    public Ret batchDelete(User user, String commentIds)
+    {
+        String[] come = commentIds.split(",");
+        for (int i = 0; i < come.length; i++)
+        {
+            delete(user, Integer.valueOf(come[i]));
+        }
+        return Ret.ok("msg", "删除成功");
     }
 }

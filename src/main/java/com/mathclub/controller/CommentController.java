@@ -40,33 +40,21 @@ public class CommentController extends BaseController
     @ActionKey("/message:add")
     public void addComment()
     {
-        String req = HttpKit.readData(getRequest());
-        log.info("message add req=" + req);
-        Comment comm = FastJson.getJson().parse(req, Comment.class);
-        String sessionId = getHeader("sessionId");
-        LogKit.info("sessionId=" + sessionId);
-        if (comm.getSubjectId() == 0 || StrKit.isBlank(comm.getText())
-            || StrKit.isBlank(sessionId))
-        {
-            renderJson(Ret.fail("msg", "请求参数为空"));
-            return;
-        }
-        int userId = 0;
-        User user = null;
-        Session session = SessionService.getUserId(sessionId);
-        if (session != null)
-        {
-            userId = session.getUserId();
-            LogKit.info("userId======" + userId);
-            user = userService.queryUserById(userId);
-            LogKit.info("name======" + user.toRecord().get("nickName"));
-        }
-        else
+        User user = getLoginUser();
+        if (user == null)
         {
             renderJson(Ret.fail("msg", "没有该用户"));
             return;
         }
-        renderJson(commentService.add(userId, user, comm));
+        String req = HttpKit.readData(getRequest());
+        log.info("message add req=" + req);
+        Comment comm = FastJson.getJson().parse(req, Comment.class);
+        if (comm.getSubjectId() == 0 || StrKit.isBlank(comm.getText()))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        renderJson(commentService.add(user.get("userId"), user, comm));
     }
 
     /**
@@ -75,34 +63,20 @@ public class CommentController extends BaseController
     @ActionKey("/message:commentList")
     public void findCommentList()
     {
-        // String req = HttpKit.readData(getRequest());
-        // log.info("message:commentList req=" + req);
-        // Comment comm = FastJson.getJson().parse(req, Comment.class);
-        String sessionId = getHeader("sessionId");
-        LogKit.info("message:commentList sessionId=" + sessionId);
-
+        User user = getLoginUser();
+        if (user == null)
+        {
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
+        
         String subjectId = getPara("subjectId");
         String page = getPara("page");
         String size = getPara("size");
-        LogKit.info("message:commentList page=" + page + "--size=" + size);
+        LogKit.info("message:commentList request page=" + page + "--size=" + size);
         if (StrKit.isBlank(page) || StrKit.isBlank(size))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
-            return;
-        }
-        int userId = 0;
-        User user = null;
-        Session session = SessionService.getUserId(sessionId);
-        if (session != null)
-        {
-            userId = session.getUserId();
-            LogKit.info("userId======" + userId);
-            user = userService.queryUserById(userId);
-            LogKit.info("name======" + user.toRecord().get("nickName"));
-        }
-        else
-        {
-            renderJson(Ret.fail("msg", "没有该用户"));
             return;
         }
         renderJson(commentService.getCommentList(user, subjectId,
@@ -148,31 +122,43 @@ public class CommentController extends BaseController
     @ActionKey("/message:delete")
     public void deleteMessage()
     {
-        String sessionId = getHeader("sessionId");
-        LogKit.info("message:delete sessionId=" + sessionId);
-
+        User user = getLoginUser();
+        if (user == null)
+        {
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
+        
         String commentId = getPara("commentId");
+        
         if (StrKit.isBlank(commentId))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        int userId = 0;
-        User user = null;
-        Session session = SessionService.getUserId(sessionId);
-        if (session != null)
-        {
-            userId = session.getUserId();
-            LogKit.info("userId======" + userId);
-            user = userService.queryUserById(userId);
-            LogKit.info("name======" + user.toRecord().get("nickName"));
-        }
-        else
+        renderJson(commentService.delete(user, Integer.valueOf(commentId)));
+    }
+    
+    
+    /**
+     * 批量删除评论
+     */
+    @ActionKey("/message:batchDelete")
+    public void batchDelete()
+    {
+        User user = getLoginUser();
+        if (user == null)
         {
             renderJson(Ret.fail("msg", "没有该用户"));
             return;
         }
-        renderJson(commentService.delete(user, Integer.valueOf(commentId)));
+        String commentIds = getPara("commentIds");
+        if (StrKit.isBlank(commentIds))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        renderJson(commentService.batchDelete(user, commentIds));
     }
 
     /**

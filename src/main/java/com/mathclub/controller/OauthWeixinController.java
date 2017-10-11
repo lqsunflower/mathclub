@@ -40,13 +40,13 @@ public class OauthWeixinController extends Controller {
 
 	@ActionKey("/oauth")
 	public void processOauthRequest() {
+	    ApiConfigKit.setThreadLocalAppId(PropKit.get("appId"));
 	    //ApiConfigKit.putApiConfig(GetApiConfigUtil.getApiConfig());
 		//ApiConfigKit.setThreadLocalApiConfig(GetApiConfigUtil.getApiConfig());
 		/** 获取授权code */
 		String code = getPara("code");
 		/** 最终目标地址 */
 		String toUrl = getPara("toUrl");
-		log.info("toUrl=" + toUrl);
 		/** 通过code获取openId值 */
 		SnsAccessToken snsAccessToken = oanthservice.getOauthInfo(code);
 		String openId = snsAccessToken.getOpenid();
@@ -71,7 +71,7 @@ public class OauthWeixinController extends Controller {
 		if (ret.isOk()) {
 			String sessionId = ret.getStr(LoginService.sessionIdName);
 			int maxAgeInSeconds = ret.getInt("maxAgeInSeconds");
-			setCookie(LoginService.sessionIdName, sessionId, maxAgeInSeconds, true);
+			//setCookie(LoginService.sessionIdName, sessionId, maxAgeInSeconds, true);
 			setAttr(LoginService.loginUserCacheName, ret.get(LoginService.loginUserCacheName));
 		}
 

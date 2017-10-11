@@ -38,7 +38,7 @@ public class LoginService {
 	public static final String loginUserCacheName = "loginUser";
 
 	// "jfinalId" 仅用于 cookie 名称，其它地方如 cache 中全部用的 "sessionId" 来做 key
-	public static final String sessionIdName = "sessionId";
+	public static final String sessionIdName = "token";
 
 	/**
 	 * 登录成功返回 sessionId 与 loginUser，否则返回一个 msg
@@ -76,6 +76,7 @@ public class LoginService {
 	}
 
 	public User getLoginAccountWithSessionId(String sessionId) {
+	    LogKit.info("走缓存获取信息" + sessionId);
 		return CacheKit.get(loginUserCacheName, sessionId);
 	}
 
@@ -88,6 +89,7 @@ public class LoginService {
 	 *     如果没过期则先放缓存一份，然后再返回
 	 */
 	public User loginWithSessionId(String sessionId, String loginIp) {
+	    LogKit.info("缓存没有，从数据库取信息 " + sessionId);
 		Session session = Session.dao.findById(sessionId);
 		if (session == null) {      // session 不存在
 			return null;
@@ -103,7 +105,7 @@ public class LoginService {
 			loginUser.put("sessionId", sessionId);                          // 保存一份 sessionId 到 loginAccount 备用
 			CacheKit.put(loginUserCacheName, sessionId, loginUser);
 
-			createLoginLog(loginUser.getUserId(), loginIp);
+			//createLoginLog(loginUser.getUserId(), loginIp);
 			return loginUser;
 		}
 		return null;

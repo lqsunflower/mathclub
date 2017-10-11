@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: mathclub
 Target Host: localhost
 Target Database: mathclub
-Date: 2017/10/9 18:10:58
+Date: 2017/10/11 17:49:44
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -30,6 +30,7 @@ DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
   `commentId` int(11) NOT NULL AUTO_INCREMENT,
   `subjectId` int(11) NOT NULL,
+  `subjectName` varchar(255) DEFAULT NULL,
   `userId` int(11) NOT NULL,
   `userName` varchar(64) DEFAULT NULL,
   `headImgurl` varchar(255) DEFAULT NULL,
@@ -169,18 +170,18 @@ CREATE TABLE `user` (
 -- ----------------------------
 INSERT INTO `account` VALUES ('1000', 'liqiu', '554bae37d082db8c36c2f2c12cf3f7a24d36f55e4e72ed4183a6dcd6677b72b5', 'cIIGpY0-HT97m-qYXxZZ4Pz-GEK7EhhM', '0', '2017-10-08 12:05:36', '123');
 INSERT INTO `account` VALUES ('1001', 'mathclub', 'cd104216c2036d72ca817d011d3fbad75ad7d487101d0a126adc6cadb92110c0', 'xSyEf-wcLrQyirCOQ2sbaabziVJKyxLR', '0', '2017-10-08 23:57:39', '12322');
-INSERT INTO `comment` VALUES ('1', '234', '8', null, null, '添加评论', null, null, '0', '2017-09-04 23:12:42');
-INSERT INTO `comment` VALUES ('2', '234', '8', null, null, '第二条哈哈哈添加评论', null, null, '0', '2017-09-04 23:18:26');
-INSERT INTO `comment` VALUES ('3', '234', '8', null, null, '第二条哈哈哈添发发发加评论', null, null, '0', '2017-09-04 23:22:30');
-INSERT INTO `comment` VALUES ('4', '234', '8', null, null, '第二条哈哈哈添发发发加评论', null, null, '0', '2017-09-05 23:09:01');
-INSERT INTO `comment` VALUES ('5', '23', '8', null, null, '第二条哈哈哈添发发发加评论', null, '0', '0', '2017-09-06 00:07:18');
-INSERT INTO `comment` VALUES ('6', '5534', '8', null, null, '第二条坎坎坷坷添发发发加评论', null, null, '0', '2017-09-06 22:39:24');
-INSERT INTO `comment` VALUES ('7', '5534', '8', 'silence', null, '第二条坎坎坷坷添发发发加评论', null, '0', '1', '2017-09-06 22:44:15');
-INSERT INTO `comment` VALUES ('8', '23', '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '评论的测试是否成功', null, '0', '0', '2017-09-18 23:28:41');
-INSERT INTO `comment` VALUES ('9', '23', '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '子评论内容', null, '8', '0', '2017-09-18 23:31:08');
-INSERT INTO `comment` VALUES ('10', '23', '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子评论内容32', null, '9', '1', '2017-09-18 23:37:57');
-INSERT INTO `comment` VALUES ('11', '23', '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子孙子评论内容甘道夫的', null, '9', '0', '2017-09-19 22:07:15');
-INSERT INTO `comment` VALUES ('12', '23', '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子孙子评论内容的方法但是', null, '9', '0', '2017-09-23 14:07:39');
+INSERT INTO `comment` VALUES ('1', '234', null, '8', null, null, '添加评论', null, null, '0', '2017-09-04 23:12:42');
+INSERT INTO `comment` VALUES ('2', '234', null, '8', null, null, '第二条哈哈哈添加评论', null, null, '0', '2017-09-04 23:18:26');
+INSERT INTO `comment` VALUES ('3', '234', null, '8', null, null, '第二条哈哈哈添发发发加评论', null, null, '0', '2017-09-04 23:22:30');
+INSERT INTO `comment` VALUES ('4', '234', null, '8', null, null, '第二条哈哈哈添发发发加评论', null, null, '0', '2017-09-05 23:09:01');
+INSERT INTO `comment` VALUES ('5', '23', null, '8', null, null, '第二条哈哈哈添发发发加评论', null, '0', '0', '2017-09-06 00:07:18');
+INSERT INTO `comment` VALUES ('6', '5534', null, '8', null, null, '第二条坎坎坷坷添发发发加评论', null, null, '0', '2017-09-06 22:39:24');
+INSERT INTO `comment` VALUES ('7', '5534', null, '8', 'silence', null, '第二条坎坎坷坷添发发发加评论', null, '0', '1', '2017-09-06 22:44:15');
+INSERT INTO `comment` VALUES ('8', '23', null, '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '评论的测试是否成功', null, '0', '0', '2017-09-18 23:28:41');
+INSERT INTO `comment` VALUES ('9', '23', null, '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '子评论内容', null, '8', '0', '2017-09-18 23:31:08');
+INSERT INTO `comment` VALUES ('10', '23', null, '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子评论内容32', null, '9', '1', '2017-09-18 23:37:57');
+INSERT INTO `comment` VALUES ('11', '23', null, '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子孙子评论内容甘道夫的', null, '9', '0', '2017-09-19 22:07:15');
+INSERT INTO `comment` VALUES ('12', '23', null, '8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '孙子孙子评论内容的方法但是', null, '9', '0', '2017-09-23 14:07:39');
 INSERT INTO `keypoint` VALUES ('1', '5', null, '知识点1');
 INSERT INTO `keypoint` VALUES ('2', '5', null, '李邱知识点');
 INSERT INTO `keypoint` VALUES ('4', '9', null, '知识点测试');

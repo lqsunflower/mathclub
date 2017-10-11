@@ -119,20 +119,12 @@ public class SubjectService
         return result;
     }
 
-    public boolean like(int userId, int subjectId, int type)
+    public int like(int userId, int subjectId, int type)
     {
-        int result = Db
+        return Db
             .update(
                 "insert into subject_like(userId,subjectId,type,createTime) values(?, ?, ?, ?)",
                 userId, subjectId, type, new Date());
-        if (result == 1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     /*
@@ -283,7 +275,8 @@ public class SubjectService
                 userSign[1] = false;
             }
             subVo.setSign(sign);
-            Record n = Db.findFirst(
+            Record n = Db
+                .findFirst(
                     "select * from subject_like where userId = ? and subjectId = ? and type = 3",
                     userId, subVo.getSubjectId());
             if (n != null)
@@ -460,9 +453,10 @@ public class SubjectService
      */
     public Ret listFavorite(int userId, int majorId)
     {
-        List<Record> list = Db.find(
-            "select * from subject_like where userId = ? and majorId = ? and type = 3",
-            userId, majorId);
+        List<Record> list = Db
+            .find(
+                "select * from subject_like where userId = ? and majorId = ? and type = 3",
+                userId, majorId);
         if (list == null || list.size() == 0)
         {
             return Ret.fail("msg", "没有该信息");
