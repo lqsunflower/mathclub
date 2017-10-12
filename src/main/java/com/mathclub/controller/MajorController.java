@@ -3,9 +3,8 @@ package com.mathclub.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
@@ -96,6 +95,7 @@ public class MajorController extends BaseController {
 	/**
 	 * 获取学科列表
 	 */
+	@Clear
 	@ActionKey("/math:listMajor")
 	public void getKeyList() {
 		List<Major> list = majorDao.find("select * from major");

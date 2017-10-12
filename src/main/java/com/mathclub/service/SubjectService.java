@@ -323,10 +323,20 @@ public class SubjectService
 
     /**
      * 分页查询全部信息包括知识点和学科名字
+     * @param param 
+     * @param keyId 
+     * @param desc 
+     * @param orderPara 
      */
-    public Page<Record> getSubjectByPage(int keyId, String name, int pageNum,
-        int pageSize)
+    public Page<Record> getSubjectByPage(int keyId, Map<String, String> param)
     {
+        
+        String name = param.get("name");
+        int pageNum = Integer.valueOf(param.get("page"));
+        int pageSize = Integer.valueOf(param.get("size"));
+        String orderPara = param.get("order");
+        String desc = param.get("desc");
+        
         String select = "select s.*,k.name as keyName,m.name as majorName";
         if (keyId != 0 && StrKit.notBlank(name))
         {

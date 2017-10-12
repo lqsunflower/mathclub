@@ -29,137 +29,169 @@ import com.mathclub.service.SubjectService;
  * 功能描述：题目相关操作
  *
  */
-@Before(AdminAuthInterceptor.class)//添加后台权限拦截
-public class SubjectAdminController extends BaseController {
+@Before(AdminAuthInterceptor.class)
+// 添加后台权限拦截
+public class SubjectAdminController extends BaseController
+{
 
-	private static Logger log = Logger.getLogger(SubjectAdminController.class);
-	public static final Subject subjectDao = new Subject().dao();
-	private SubjectService subjectService = new SubjectService();
+    private static Logger log = Logger.getLogger(SubjectAdminController.class);
+    public static final Subject subjectDao = new Subject().dao();
+    private SubjectService subjectService = new SubjectService();
 
-	/**
-	 * 添加题目
-	 */
-	@ActionKey("/subject:add")
-	public void addSubject() {
-		String req = HttpKit.readData(getRequest());
-		log.info("subject:add req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		String name = param.get("name");
-		String majorId = param.get("majorId");
-		String pic = param.get("pic");
-		String apic = param.get("apic");
-		log.info("subject:add name=" + name + "majorId=" + majorId + "pic=" + pic + "apic=" + param.get("apic"));
+    /**
+     * 添加题目
+     */
+    @ActionKey("/subject:add")
+    public void addSubject()
+    {
+        String req = HttpKit.readData(getRequest());
+        log.info("subject:add req=" + req);
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(req) || (param == null))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        String name = param.get("name");
+        String majorId = param.get("majorId");
+        String pic = param.get("pic");
+        String apic = param.get("apic");
+        log.info("subject:add name=" + name + "majorId=" + majorId + "pic="
+            + pic + "apic=" + param.get("apic"));
 
-		if (StrKit.isBlank(name) || StrKit.isBlank(pic) || StrKit.isBlank(apic)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		renderJson(subjectService.addSubject(param));
-	}
+        if (StrKit.isBlank(name) || StrKit.isBlank(pic) || StrKit.isBlank(apic))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        renderJson(subjectService.addSubject(param));
+    }
 
-	/**
-	 * 修改题目
-	 */
-	@ActionKey("/subject:update")
-	public void updateSubject() {
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		String name = param.get("name");
-		String majorId = param.get("majorId");
-		String keyId = param.get("keyId");
-		log.info("name=" + name + "majorId=" + majorId + "keyId=" + keyId + "answer=" + param.get("answer"));
+    /**
+     * 修改题目
+     */
+    @ActionKey("/subject:update")
+    public void updateSubject()
+    {
+        String req = HttpKit.readData(getRequest());
+        log.info("req=" + req);
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(req) || (param == null))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        String name = param.get("name");
+        String majorId = param.get("majorId");
+        String keyId = param.get("keyId");
+        log.info("name=" + name + "majorId=" + majorId + "keyId=" + keyId
+            + "answer=" + param.get("answer"));
 
-		if (StrKit.isBlank(name) || Integer.valueOf(param.get("subjectId")) == 0) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		renderJson(subjectService.update(param));
-	}
+        if (StrKit.isBlank(name)
+            || Integer.valueOf(param.get("subjectId")) == 0)
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        renderJson(subjectService.update(param));
+    }
 
-	/**
-	 * (后台管理)删除题目
-	 */
-	@ActionKey("/subject:delete")
-	public void deleteSubject() {
+    /**
+     * (后台管理)删除题目
+     */
+    @ActionKey("/subject:delete")
+    public void deleteSubject()
+    {
 
-		String req = HttpKit.readData(getRequest());
-		log.info("req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		String subjectId = param.get("subjectId");
+        String req = HttpKit.readData(getRequest());
+        log.info("req=" + req);
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(req) || (param == null))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        String subjectId = param.get("subjectId");
 
-		log.info("subjectId=" + subjectId);
-		if (StrKit.isBlank(subjectId) || Integer.valueOf(subjectId) == 0) {
-			renderJson(Ret.fail("msg", "请求参数错误"));
-			return;
-		}
-		renderJson(subjectService.delete(Integer.valueOf(subjectId)));
-	}
+        log.info("subjectId=" + subjectId);
+        if (StrKit.isBlank(subjectId) || Integer.valueOf(subjectId) == 0)
+        {
+            renderJson(Ret.fail("msg", "请求参数错误"));
+            return;
+        }
+        renderJson(subjectService.delete(Integer.valueOf(subjectId)));
+    }
 
-	/**
-	 * (后台管理)根据题目ID获取题目信息
-	 */
-	@Clear
-	@ActionKey("/subject:findById")
-	public void getSubjectInfoById() {
+    /**
+     * (后台管理)根据题目ID获取题目信息
+     */
+    @Clear
+    @ActionKey("/subject:findById")
+    public void getSubjectInfoById()
+    {
+        String req = HttpKit.readData(getRequest());
+        log.info("subject:findById req=" + req);
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(req) || (param == null))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        String subjectId = param.get("subjectId");
 
-		String req = HttpKit.readData(getRequest());
-		log.info("subject:findById req=" + req);
-		Map<String, String> param = StringKit.putParamsInMap(req);
-		if (StrKit.isBlank(req) || (param == null)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		String subjectId = param.get("subjectId");
+        log.info("get subject info request subjectId =" + subjectId);
+        Subject subject = subjectService.getSubjectInfoById(Integer
+            .valueOf(subjectId));
+        if (subject != null)
+        {
+            renderJson(Ret.ok("data", subject));
+        }
+        else
+        {
+            renderJson(Ret.fail("msg", "没有该题目"));
+        }
+    }
 
-		log.info("get subject info request subjectId =" + subjectId);
-		Subject subject = subjectService.getSubjectInfoById(Integer.valueOf(subjectId));
-		if (subject != null) {
-			renderJson(Ret.ok("data", subject));
-		} else {
-			renderJson(Ret.fail("msg", "没有该题目"));
-		}
-	}
+    /**
+     * (后台管理)分页查询题目根据知识点ID 给后台管理页面的接口
+     */
+    @ActionKey("/subject:list")
+    public void getSubjectListByPage()
+    {
 
-	/**
-	 * (后台管理)分页查询题目根据知识点ID 给后台管理页面的接口
-	 */
-	@ActionKey("/subject:list")
-	public void getSubjectListByPage() {
-		String keyId = getPara("keyId"); 
-		String page = getPara("page");
-		String size = getPara("size");
-		LogKit.info("subject:list page=" + page + "--size=" + size);
-		if (StrKit.isBlank(page) || StrKit.isBlank(size)) {
-			renderJson(Ret.fail("msg", "请求参数为空"));
-			return;
-		}
-		
-		Page<Record> subjectList = null;
-		if (StrKit.notBlank(keyId)) {
-			subjectList = subjectService.getSubjectByPage(Integer.valueOf(keyId), getPara("name"),
-					Integer.valueOf(page), Integer.valueOf(size));
-		} else {
-			subjectList = subjectService.getSubjectByPage(0, getPara("name"), Integer.valueOf(page),
-					Integer.valueOf(size));
-		}
-		if (subjectList != null && subjectList.getTotalPage() != 0) {
-			renderJson(Ret.ok("data", subjectList));
-		} else {
-			renderJson(Ret.fail("msg", "没有题目信息"));
-		}
-	}
+        String req = HttpKit.readData(getRequest());
+        log.info("subject:list req=" + req);
+        Map<String, String> param = StringKit.putParamsInMap(req);
+        if (StrKit.isBlank(req) || (param == null))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        if (StrKit.isBlank(param.get("page"))
+            || StrKit.isBlank(param.get("size")))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        Page<Record> subjectList = null;
+
+        if (StrKit.notBlank(param.get("keyId")))
+        {
+            subjectList = subjectService.getSubjectByPage(Integer.valueOf(param.get("keyId")),
+                param);
+        }
+        else
+        {
+            subjectList = subjectService.getSubjectByPage(0, param);
+        }
+        if (subjectList != null && subjectList.getTotalPage() != 0)
+        {
+            renderJson(Ret.ok("data", subjectList));
+        }
+        else
+        {
+            renderJson(Ret.fail("msg", "没有题目信息"));
+        }
+    }
 
 }

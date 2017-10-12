@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
@@ -128,6 +129,7 @@ public class KeyController extends BaseController
     /**
      * 获取知识点列表根据学科id
      */
+    @Clear
     @ActionKey("/math:listKey")
     public void getKeyList()
     {
