@@ -323,41 +323,52 @@ public class SubjectService
 
     /**
      * 分页查询全部信息包括知识点和学科名字
-     * @param param 
-     * @param keyId 
-     * @param desc 
-     * @param orderPara 
+     * @param param
+     * @param keyId
+     * @param desc
+     * @param orderPara
      */
     public Page<Record> getSubjectByPage(int keyId, Map<String, String> param)
     {
-        
+
         String name = param.get("name");
         int pageNum = Integer.valueOf(param.get("page"));
         int pageSize = Integer.valueOf(param.get("size"));
-        String orderPara = param.get("order");
+        String orderPara = "s." + param.get("order");
         String desc = param.get("desc");
-        
+        String sql = null;
         String select = "select s.*,k.name as keyName,m.name as majorName";
         if (keyId != 0 && StrKit.notBlank(name))
         {
-            String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by s.createTime desc";
+            if (desc.equals("0"))
+            {
+                sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ?";
+            }
+            else
+            {
+                sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ? desc";
+            }
+
             return Db.paginate(pageNum, pageSize, select, sql, keyId, "%"
-                + name + "%");
+                + name + "%", orderPara);
         }
         else if (keyId != 0)
         {
-            String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? order by s.createTime desc";
+            if (desc.equals("0")){
+                
+            }
+            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? order by s.createTime desc";
             return Db.paginate(pageNum, pageSize, select, sql, keyId);
         }
         else if (StrKit.notBlank(name))
         {
-            String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by s.createTime desc";
+            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by s.createTime desc";
             return Db
                 .paginate(pageNum, pageSize, select, sql, "%" + name + "%");
         }
         else
         {
-            String sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by s.createTime desc";
+            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by s.createTime desc";
             return Db.paginate(pageNum, pageSize, select, sql);
         }
 
