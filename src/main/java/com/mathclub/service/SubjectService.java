@@ -11,7 +11,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.jfinal.aop.Clear;
 import com.jfinal.json.FastJson;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -39,13 +41,11 @@ public class SubjectService
         // 查找知识点名字和学科名字
         KeyPoint key = keyDao.findFirst(
             "select * from keypoint where keyId = ?", param.get("keyId"));
-        System.out.println("______________" + key.get("majorName") + "999"
-            + key.get("keyName"));
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", param.get("name"));
         map.put("majorId", param.get("majorId"));
         map.put("majorName", key.get("majorName"));
-        map.put("keyName", key.get("keyName"));
+        map.put("keyName", key.get("name"));
         map.put("keyId", param.get("keyId"));
         map.put("pic", param.get("pic"));
         map.put("apic", param.get("apic"));
@@ -219,11 +219,15 @@ public class SubjectService
      * @param userId
      * @param keyId
      * @param pageNum
+     * @param desc
+     * @param orderParam
      * @return
      */
-    public Ret querySubjectInfo(int userId, int keyId, int pageNum, int pageSize)
+    public Ret querySubjectInfo(int userId, int keyId, int pageNum,
+        int pageSize, String orderParam, String desc)
     {
-        Page<Record> page = getSubjectListByPage(keyId, pageNum, pageSize);
+        Page<Record> page = getSubjectListByPage(keyId, pageNum, pageSize,
+            orderParam, desc);
         boolean[] userSign = new boolean[2];
         int[] sign = new int[2];
 
@@ -307,15 +311,25 @@ public class SubjectService
      * @param keyId
      * @param pageNum
      * @param pageSize
+     * @param desc
+     * @param orderParam
      * @return
      */
     private Page<Record> getSubjectListByPage(int keyId, int pageNum,
-        int pageSize)
+        int pageSize, String orderParam, String desc)
     {
-        String select = "select s.*,k.name as keyName";
+        String select = "select *";
+        String sql = null;
         if (keyId != 0)
         {
-            String sql = "from subject s inner join keypoint k on s.keyId=k.keyId where s.keyId = ? and s.hide = 0 order by createTime desc";
+            if (desc.equals("0"))
+            {
+                sql = "from subject where keyId = ? and hide = 0 order by " + orderParam;
+            }
+            else
+            {
+                sql = "from subject where keyId = ? and hide = 0 order by " + orderParam +" desc";
+            }
             return Db.paginate(pageNum, pageSize, select, sql, keyId);
         }
         return null;
@@ -330,45 +344,68 @@ public class SubjectService
      */
     public Page<Record> getSubjectByPage(int keyId, Map<String, String> param)
     {
-
         String name = param.get("name");
         int pageNum = Integer.valueOf(param.get("page"));
         int pageSize = Integer.valueOf(param.get("size"));
-        String orderPara = "s." + param.get("order");
+        String orderPara = param.get("order");
         String desc = param.get("desc");
         String sql = null;
-        String select = "select s.*,k.name as keyName,m.name as majorName";
+        String select = "select *";
         if (keyId != 0 && StrKit.notBlank(name))
         {
             if (desc.equals("0"))
             {
-                sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ?";
+                // sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ?";
+                sql = "from subject where keyId = ? and name like ? order by " + orderPara;
             }
             else
             {
-                sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ? desc";
+                // sql =
+                // "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? and s.name like ? order by ? desc";
+                sql = "from subject where keyId = ? and name like ? order by "+ orderPara +" desc";
             }
-
-            return Db.paginate(pageNum, pageSize, select, sql, keyId, "%"
-                + name + "%", orderPara);
+            return Db.paginate(pageNum, pageSize, select, sql, keyId, "%" + name + "%");
         }
         else if (keyId != 0)
         {
-            if (desc.equals("0")){
-                
+            if (desc.equals("0"))
+            {
+                sql = "from subject where keyId = ? order by " + orderPara;
             }
-            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.keyId = ? order by s.createTime desc";
-            return Db.paginate(pageNum, pageSize, select, sql, keyId);
+            else
+            {
+                sql = "from subject where keyId = ? order by " + orderPara +" desc";
+            }
+            return Db
+                .paginate(pageNum, pageSize, select, sql, keyId);
         }
         else if (StrKit.notBlank(name))
         {
-            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by s.createTime desc";
-            return Db
-                .paginate(pageNum, pageSize, select, sql, "%" + name + "%");
+            if (desc.equals("0"))
+            {
+                // sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by ?";
+                sql = "from subject where name like ? order by " + orderPara;
+            }
+            else
+            {
+                // sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId where s.name like ? order by ? desc";
+                sql = "from subject where name like ? order by " + orderPara
+                    + " desc";
+            }
+            return Db.paginate(pageNum, pageSize, select, sql, "%" + name + "%");
         }
         else
         {
-            sql = "from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by s.createTime desc";
+            if (desc.equals("0"))
+            {
+                // sql ="from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by ?";
+                sql = "from subject order by " + orderPara;
+            }
+            else
+            {
+                // sql ="from (subject s inner join keypoint k on s.keyId=k.keyId) inner join major m on k.majorId = m.majorId order by ? desc";
+                sql = "from subject order by " + orderPara + " desc";
+            }
             return Db.paginate(pageNum, pageSize, select, sql);
         }
 
@@ -376,10 +413,14 @@ public class SubjectService
 
     public Ret update(Map<String, String> param)
     {
+        KeyPoint key = keyDao.findFirst(
+            "select * from keypoint where keyId = ?", param.get("keyId"));
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("subjectId", param.get("subjectId"));
         map.put("name", param.get("name"));
         map.put("majorId", param.get("majorId"));
+        map.put("majorName", key.get("majorName"));
+        map.put("keyName", key.get("name"));
         map.put("keyId", param.get("keyId"));
         map.put("pic", param.get("pic"));
         map.put("apic", param.get("apic"));
@@ -407,6 +448,7 @@ public class SubjectService
     {
         int ret = Db.update("delete from subject where subjectId = ?",
             subjectId);
+        Db.update("delete from comment where subjectId = ?",subjectId);
         if (ret > 0)
         {
             return Ret.ok("msg", "删除题目成功");

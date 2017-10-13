@@ -1,20 +1,13 @@
 package com.mathclub.controller;
 
 import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import com.jfinal.core.ActionKey;
-import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
-import com.mathclub.kit.StringKit;
-import com.mathclub.model.Session;
 import com.mathclub.model.Subject;
 import com.mathclub.model.User;
-import com.mathclub.service.SessionService;
 import com.mathclub.service.SubjectService;
 
 /**
@@ -40,9 +33,10 @@ public class UserController extends BaseController
         }
         LogKit.info("subject:querySubjectInfoByPage request name ="
             + getPara("keyId"));
+        
         Ret ret = subjectService.querySubjectInfo(user.get("userId"),
             getParaToInt("keyId"), getParaToInt("page", 1),
-            getParaToInt("size"));
+            getParaToInt("size"),getPara("order"),getPara("desc"));
         renderJson(ret);
     }
 

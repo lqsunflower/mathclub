@@ -76,7 +76,7 @@ public class LoginService {
 	}
 
 	public User getLoginAccountWithSessionId(String sessionId) {
-	    LogKit.info("走缓存获取信息" + sessionId);
+	    LogKit.info("走缓存获取用户信息" + sessionId);
 		return CacheKit.get(loginUserCacheName, sessionId);
 	}
 
@@ -89,7 +89,7 @@ public class LoginService {
 	 *     如果没过期则先放缓存一份，然后再返回
 	 */
 	public User loginWithSessionId(String sessionId, String loginIp) {
-	    LogKit.info("缓存没有，从数据库取信息 " + sessionId);
+	    LogKit.info("用户信息缓存没有，从数据库取信息 " + sessionId);
 		Session session = Session.dao.findById(sessionId);
 		if (session == null) {      // session 不存在
 			return null;

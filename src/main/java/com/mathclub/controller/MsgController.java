@@ -4,6 +4,7 @@
 package com.mathclub.controller;
 
 import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.jfinal.MsgControllerAdapter;
 import com.jfinal.weixin.sdk.msg.in.InTextMsg;
@@ -51,6 +52,7 @@ public class MsgController extends MsgControllerAdapter {
 			render(outMsg);
 		}
 		if (InFollowEvent.EVENT_INFOLLOW_UNSUBSCRIBE.equals(inFollowEvent.getEvent())) {
+		    Db.update("delete from user where openId = ?",inFollowEvent.getFromUserName());//取消关注删除用户表内容
 			renderText("success");
 		}
 

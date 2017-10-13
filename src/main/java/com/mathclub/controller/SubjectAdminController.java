@@ -15,7 +15,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
@@ -158,7 +157,6 @@ public class SubjectAdminController extends BaseController
     @ActionKey("/subject:list")
     public void getSubjectListByPage()
     {
-
         String req = HttpKit.readData(getRequest());
         log.info("subject:list req=" + req);
         Map<String, String> param = StringKit.putParamsInMap(req);
@@ -177,8 +175,8 @@ public class SubjectAdminController extends BaseController
 
         if (StrKit.notBlank(param.get("keyId")))
         {
-            subjectList = subjectService.getSubjectByPage(Integer.valueOf(param.get("keyId")),
-                param);
+            subjectList = subjectService.getSubjectByPage(
+                Integer.valueOf(param.get("keyId")), param);
         }
         else
         {

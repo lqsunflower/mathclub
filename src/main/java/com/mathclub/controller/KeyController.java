@@ -133,6 +133,13 @@ public class KeyController extends BaseController
     @ActionKey("/math:listKey")
     public void getKeyList()
     {
+        User user = getLoginUser();
+        if (user == null)
+        {
+            LogKit.error("math:listKey user is null");
+            renderJson(Ret.fail("msg", "没有该用户"));
+            return;
+        }
         String majorId = getPara("majorId");
         LogKit.info("math:listKey req majorId=" + majorId);
         if (StrKit.isBlank(majorId))

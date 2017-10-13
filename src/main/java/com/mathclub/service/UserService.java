@@ -28,26 +28,22 @@ public class UserService {
 		return dao.findFirst("select * from user where userId=? limit 1", userId);
 	}
 
-	public boolean addUser(String openid, String nickname, String headimgurl, String ip) {
+	public int addUser(String openid, String nickname, String headimgurl, String ip) {
 		if (StrKit.isBlank(openid)) {
-			return false;
+			return 0;
 		}
-		/*User user = new User();
-		user.setOpenid(openid);
-		user.setNickname(nickname);
-		user.setHeadimgurl(headimgurl);
-		user.setIp(ip);
-		user.setCreateTime(new Date());*/
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("openid", openid);
 		map.put("nickname", nickname);
 		map.put("headimgurl", headimgurl);
 		map.put("ip", ip);
 		map.put("createTime", new Date());
-		LogKit.info("o=" + openid + "|n=" + nickname + "|h=" + headimgurl);
-		LogKit.info("i=" + ip + "caret=" + new Date());
 		Record u = new Record().setColumns(map);
-		return Db.save("user", "userId", u);
+		if(Db.save("user", "userId", u)){
+		    return u.get("userId");
+		}else{
+		    return 0;
+		}
 	}
 	
 	
