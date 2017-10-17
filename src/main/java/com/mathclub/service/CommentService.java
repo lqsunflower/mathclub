@@ -168,6 +168,13 @@ public class CommentService
 
     }
 
+    public Ret delete(int commnetId)
+    {
+        Db.update("delete from comment where commentId = ?", commnetId);
+        Db.update("delete from comment where parentId = ?", commnetId);
+        return Ret.ok("msg", "删除成功");
+    }
+
     public Ret delete(User user, int commnetId)
     {
         Db.update("delete from comment where commentId = ? and userId = ?",
@@ -275,12 +282,12 @@ public class CommentService
      * @param commentIds
      * @return
      */
-    public Ret batchDelete(User user, String commentIds)
+    public Ret batchDelete(String commentIds)
     {
         String[] come = commentIds.split(",");
         for (int i = 0; i < come.length; i++)
         {
-            delete(user, Integer.valueOf(come[i]));
+            delete(Integer.valueOf(come[i]));
         }
         return Ret.ok("msg", "删除成功");
     }

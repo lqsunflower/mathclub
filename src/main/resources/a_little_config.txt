@@ -7,6 +7,6 @@ appSecret=c0d3572dc870e6f670d1568b12bde687
 token=mathclub
 url=http://macjlb.com/#/jump
 
-admin=mathclub
+admin=mathclub,lyj
 
 encryptMessage=false

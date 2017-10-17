@@ -1,6 +1,7 @@
 package com.mathclub.admin;
 
 import com.jfinal.kit.HashKit;
+import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -9,6 +10,7 @@ import com.jfinal.plugin.ehcache.CacheKit;
 import com.mathclub.model.Account;
 import com.mathclub.model.Session;
 import com.jfinal.kit.Ret;
+
 import java.util.Date;
 
 /**
@@ -70,6 +72,7 @@ public class LoginService {
 	}
 
 	public Account getLoginAccountWithSessionId(String sessionId) {
+	    LogKit.debug("从缓存中获取后台登录的session。sessionId=" + sessionId);
 		return CacheKit.get(loginAccountCacheName, sessionId);
 	}
 
@@ -82,7 +85,8 @@ public class LoginService {
 	 *     如果没过期则先放缓存一份，然后再返回
 	 */
 	public Account loginWithSessionId(String sessionId, String loginIp) {
-		Session session = Session.dao.findById(sessionId);
+	    LogKit.debug("缓存中没有后台登录的session,从数据库中获取。sessionId=" + sessionId);
+	    Session session = Session.dao.findById(sessionId);
 		if (session == null) {      // session 不存在
 			return null;
 		}

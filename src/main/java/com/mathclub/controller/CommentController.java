@@ -4,8 +4,6 @@
  */
 package com.mathclub.controller;
 
-import org.apache.log4j.Logger;
-
 import com.jfinal.aop.Before;
 import com.jfinal.core.ActionKey;
 import com.jfinal.json.FastJson;
@@ -15,11 +13,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.mathclub.interceptor.AdminAuthInterceptor;
 import com.mathclub.model.Comment;
-import com.mathclub.model.Session;
 import com.mathclub.model.User;
 import com.mathclub.service.CommentService;
-import com.mathclub.service.SessionService;
-import com.mathclub.service.UserService;
 
 /**
  * 功能描述：评论
@@ -27,12 +22,7 @@ import com.mathclub.service.UserService;
  */
 public class CommentController extends BaseController
 {
-
-    private static Logger log = Logger.getLogger(CommentController.class);
-
     private CommentService commentService = new CommentService();
-
-    private UserService userService = new UserService();
 
     /**
      * 添加回复
@@ -47,7 +37,7 @@ public class CommentController extends BaseController
             return;
         }
         String req = HttpKit.readData(getRequest());
-        log.info("message add req=" + req);
+        LogKit.info("message add req=" + req);
         Comment comm = FastJson.getJson().parse(req, Comment.class);
         if (comm.getSubjectId() == 0 || StrKit.isBlank(comm.getText()))
         {
@@ -143,22 +133,17 @@ public class CommentController extends BaseController
     /**
      * 批量删除评论
      */
+    @Before(AdminAuthInterceptor.class)
     @ActionKey("/message:batchDelete")
     public void batchDelete()
     {
-        User user = getLoginUser();
-        if (user == null)
-        {
-            renderJson(Ret.fail("msg", "没有该用户"));
-            return;
-        }
         String commentIds = getPara("commentIds");
         if (StrKit.isBlank(commentIds))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        renderJson(commentService.batchDelete(user, commentIds));
+        renderJson(commentService.batchDelete(commentIds));
     }
 
     /**

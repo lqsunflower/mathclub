@@ -15,11 +15,6 @@ package com.mathclub.kit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 
-/**
- * 功能描述：jfinal框架初始化注值公共方法
- * @author wangjin
- *
- */
 public class GetApiConfigUtil
 {
     public static ApiConfig getApiConfig()

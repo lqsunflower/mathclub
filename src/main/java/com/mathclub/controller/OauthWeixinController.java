@@ -16,6 +16,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.SnsApi;
+import com.mathclub.kit.GetApiConfigUtil;
 import com.mathclub.kit.IpKit;
 import com.mathclub.login.LoginController;
 import com.mathclub.login.LoginService;
@@ -41,10 +42,10 @@ public class OauthWeixinController extends Controller
     private final User userDao = new User().dao();
 
     @ActionKey("/oauth")
-    public void processOauthRequest()
+    public void index()
     {
-        ApiConfigKit.setThreadLocalAppId(PropKit.get("appId"));
-        // ApiConfigKit.putApiConfig(GetApiConfigUtil.getApiConfig());
+        //ApiConfigKit.setThreadLocalAppId(PropKit.get("appId"));
+        //ApiConfigKit.putApiConfig(GetApiConfigUtil.getApiConfig());
         // ApiConfigKit.setThreadLocalApiConfig(GetApiConfigUtil.getApiConfig());
         /** 获取授权code */
         String code = getPara("code");
@@ -65,8 +66,7 @@ public class OauthWeixinController extends Controller
         if (user != null)
         {
             userId = user.toRecord().getInt("userId");
-            LogKit.info("user is exist.userId=" + user.toJson());
-            LogKit.info("userNickname=" + user.toRecord().getStr("nickName"));
+            log.info("user is exist.userId=" + user.toJson());
         }
         else
         {
@@ -94,7 +94,6 @@ public class OauthWeixinController extends Controller
                 LogKit.info("删除过期的session");
                 session.delete(); // 被动式删除过期数据，此外还需要定时线程来主动清除过期数据
             }
-            LogKit.info("新注册kkkkkkkkkkkkkkk");
             Ret ret = login.doLogin(openId, ip);// 自动登录
             if (ret.isOk())
             {
