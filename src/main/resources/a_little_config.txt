@@ -2,8 +2,8 @@ jdbcUrl = jdbc:mysql://localhost/mathclub?characterEncoding=utf8&zeroDateTimeBeh
 user = root
 password =root
 devMode = true
-appId=wxfa57b2b9baf9839a
-appSecret=c0d3572dc870e6f670d1568b12bde687
+appId=wx7bfe3e7fbaed004b
+appSecret=33d9551ca1026d8932859a19cfa52259
 token=mathclub
 url=http://macjlb.com/#/jump
 

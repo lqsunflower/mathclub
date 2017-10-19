@@ -291,4 +291,16 @@ public class CommentService
         }
         return Ret.ok("msg", "删除成功");
     }
+
+    
+    public Ret update(int isToSys,int commentId)
+    {
+        int ret = Db.update("update comment set isToSys = ? where commentId = ?",
+            isToSys, commentId);
+        if (ret > 0){
+            return Ret.ok("msg", "成功");
+        }else{
+            return Ret.fail("msg", "失败");
+        }
+    }
 }

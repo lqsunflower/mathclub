@@ -13,10 +13,9 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.Ret;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.SnsApi;
-import com.mathclub.kit.GetApiConfigUtil;
 import com.mathclub.kit.IpKit;
 import com.mathclub.login.LoginController;
 import com.mathclub.login.LoginService;
@@ -39,8 +38,31 @@ public class OauthWeixinController extends Controller
     OauthWeixinService oanthservice = new OauthWeixinService();
     private UserService userService = new UserService();
     LoginController login = new LoginController();
-    private final User userDao = new User().dao();
 
+    /**
+     * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
+     * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
+     */
+    public ApiConfig getApiConfig() {
+        ApiConfig ac = new ApiConfig();
+        
+        // 配置微信 API 相关常量
+        ac.setToken(PropKit.get("token"));
+        ac.setAppId(PropKit.get("appId"));
+        ac.setAppSecret(PropKit.get("appSecret"));
+        
+        /**
+         *  是否对消息进行加密，对应于微信平台的消息加解密方式：
+         *  1：true进行加密且必须配置 encodingAesKey
+         *  2：false采用明文模式，同时也支持混合模式
+         */
+        ac.setEncryptMessage(PropKit.getBoolean("encryptMessage", false));
+        ac.setEncodingAesKey(PropKit.get("encodingAesKey", "setting it in config file"));
+        return ac;
+    }
+    
+    
+    
     @ActionKey("/oauth")
     public void index()
     {
@@ -59,7 +81,7 @@ public class OauthWeixinController extends Controller
         String nickName = userInfo.getStr("nickname");
         String headImgurl = userInfo.getStr("headimgurl");
         User user = null;
-        int userId = 0;
+        long userId = 0;
         String ip = IpKit.getRealIp(getRequest());
         // 根据openId去查询用户信息
         user = userService.queryUser(openId);
@@ -71,7 +93,7 @@ public class OauthWeixinController extends Controller
         else
         {
             // 第一次登陆添加用户
-            int result = userService.addUser(openId, nickName, headImgurl, ip);
+            long result = userService.addUser(openId, nickName, headImgurl, ip);
             if (result > 0)
             {
                 userId = result;
@@ -91,7 +113,6 @@ public class OauthWeixinController extends Controller
         {
             if (session != null && session.isExpired())
             { // session 已过期
-                LogKit.info("删除过期的session");
                 session.delete(); // 被动式删除过期数据，此外还需要定时线程来主动清除过期数据
             }
             Ret ret = login.doLogin(openId, ip);// 自动登录
@@ -114,7 +135,7 @@ public class OauthWeixinController extends Controller
         }
         StringBuilder sb = new StringBuilder();
         sb.append(PropKit.get("url"));
-        sb.append("?u=").append(user.toRecord().getStr("userId"));
+        sb.append("?u=").append(userId);
         sb.append("&n=").append(name);
         sb.append("&h=").append(headImgurl);
         sb.append("&sessionId=").append(sessionId);

@@ -163,7 +163,7 @@ CREATE TABLE `user` (
   `ip` varchar(100) DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -243,5 +243,6 @@ INSERT INTO `test` VALUES ('2', '2', 'test333', '2,4,3', '2017-08-30 23:06:47', 
 INSERT INTO `test` VALUES ('3', '5', '1', '回答', '2017-09-09 00:26:58', '2017-09-09 00:26:58');
 INSERT INTO `upload_counter` VALUES ('image', '7', '图片文件');
 INSERT INTO `upload_counter` VALUES ('video', '1', '视频文件');
-INSERT INTO `user` VALUES ('1000', null, 'liyijun', null, null, null);
+INSERT INTO `user` VALUES ('100', null, 'liyijun', null, null, null);
+INSERT INTO `user` VALUES ('101', null, 'admin', null, null, null);
 INSERT INTO `user` VALUES ('8', 'ofkEcw5_4iciDfD6_u_EGuLSilF8', 'silence', 'http://wx.qlogo.cn/mmopen/zOP9dTzibRMggz7zdj5dSYtungKjDgLITI9w6hP8WpY7L6hEsJWv3BxFVticSqYIRSPsa2thTglMprC3uHP5OyVDxScJdP6NCv/0', '127.0.0.1', '2017-08-19 21:28:00');

@@ -141,7 +141,7 @@ public class KeyController extends BaseController
             return;
         }
         String majorId = getPara("majorId");
-        LogKit.info("math:listKey req majorId=" + majorId);
+        LogKit.info("math:listKey req majorId=" + majorId + user.getStr("userId"));
         if (StrKit.isBlank(majorId))
         {
             renderJson(Ret.fail("msg", "请求参数错误"));

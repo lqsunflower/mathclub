@@ -28,7 +28,7 @@ public class UserService {
 		return dao.findFirst("select * from user where userId=? limit 1", userId);
 	}
 
-	public int addUser(String openid, String nickname, String headimgurl, String ip) {
+	public long addUser(String openid, String nickname, String headimgurl, String ip) {
 		if (StrKit.isBlank(openid)) {
 			return 0;
 		}

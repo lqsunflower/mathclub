@@ -147,6 +147,26 @@ public class CommentController extends BaseController
     }
 
     /**
+     * 更新评论，主要用于后台管理员回答反馈信息后更新isToSys字段
+     */
+    @Before(AdminAuthInterceptor.class)
+    @ActionKey("/message:update")
+    public void updateMessage()
+    {
+        String commentId = getPara("commentId");
+        String isToSys = getPara("isToSys");
+        
+        if (StrKit.isBlank(commentId))
+        {
+            renderJson(Ret.fail("msg", "请求参数为空"));
+            return;
+        }
+        renderJson(commentService.update(Integer.valueOf(isToSys), Integer.valueOf(commentId)));
+    }
+    
+    
+    
+    /**
      * 修改题目
      */
     /*
