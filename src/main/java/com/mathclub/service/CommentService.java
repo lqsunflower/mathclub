@@ -99,14 +99,9 @@ public class CommentService
 
     public Ret getCommentList(User user, String subjectId, int page, int size)
     {
-        String sa = "select c2.*"
-            + "from comment c1 INNER JOIN comment c2 on c2.parentId = c1.commentId "
-            + "where c2.parentId = ?";
-
         String select = "select *";
         String sql = "from comment where subjectId = ? and parentId = 0 order by createTime desc";
         Page<Record> comments = Db.paginate(page, size, select, sql, subjectId);
-
         List<Record> list = comments.getList();
         if (list == null || list.size() == 0)
         {
@@ -117,8 +112,9 @@ public class CommentService
         {
             CommentVo comVo = FastJson.getJson().parse(record.toJson(),
                 CommentVo.class);
-            List<Record> replys = Db.find(sa, comVo.getCommentId());
-            comVo.setReply(replys);
+            List<CommentVo> aa = getChildrens(comVo);
+            System.out.println("size=" + aa.size());
+            comVo.setReply(aa);
             coms.add(comVo);
         }
 
@@ -130,6 +126,33 @@ public class CommentService
         map.put("isLastPage", comments.isLastPage());
         map.put("pageNumber", comments.getPageNumber());
         return Ret.ok("data", map);
+    }
+
+    private List<CommentVo> getChildrens(CommentVo comVo)
+    {
+        List<CommentVo> children = new ArrayList<CommentVo>();
+        /*String sql = "select c2.*"
+            + "from comment c1 INNER JOIN comment c2 on c2.parentId = c1.commentId "
+            + "where c2.parentId = ?";*/
+        String sql = "select *"
+            + "from comment where parentId = ?";
+        System.out.println("进入该条评论id=" + comVo.getCommentId() + "|父评论id="
+            + comVo.getParentId());
+        Record reply = Db.findFirst(sql, comVo.getCommentId());
+        if (reply != null)
+        {
+            CommentVo vo = FastJson.getJson().parse(reply.toJson(),
+                CommentVo.class);
+            System.out.println("查询到的子回复id=" + vo.getCommentId() + "dsdd="
+                + vo.getParentId());
+            children.add(vo);
+            if (vo.getParentId() != 0)
+            {
+                System.out.println("递归的该评论id=" + vo.getCommentId());
+                getChildrens(vo);
+            }
+        }
+        return children;
     }
 
     public Ret queryMessage(String type, int page, int size)
@@ -292,14 +315,17 @@ public class CommentService
         return Ret.ok("msg", "删除成功");
     }
 
-    
-    public Ret update(int isToSys,int commentId)
+    public Ret update(int isToSys, int commentId)
     {
-        int ret = Db.update("update comment set isToSys = ? where commentId = ?",
-            isToSys, commentId);
-        if (ret > 0){
+        int ret = Db.update(
+            "update comment set isToSys = ? where commentId = ?", isToSys,
+            commentId);
+        if (ret > 0)
+        {
             return Ret.ok("msg", "成功");
-        }else{
+        }
+        else
+        {
             return Ret.fail("msg", "失败");
         }
     }

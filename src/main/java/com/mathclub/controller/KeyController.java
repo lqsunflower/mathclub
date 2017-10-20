@@ -7,14 +7,12 @@ import java.util.Map;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.ActionKey;
-import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.LogKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.mathclub.interceptor.AdminAuthInterceptor;
-import com.mathclub.kit.StringKit;
 import com.mathclub.model.KeyPoint;
 import com.mathclub.model.Major;
 import com.mathclub.model.User;
@@ -41,7 +39,7 @@ public class KeyController extends BaseController
 
         String name = getPara("name");
         String majorId = getPara("majorId");
-        LogKit.info("name=" + name + "|majorId=" + majorId);
+        LogKit.info("|name=" + name + "|majorId=" + majorId);
         if (StrKit.isBlank(name) || StrKit.isBlank(majorId)
             || Integer.valueOf(majorId) == 0)
         {
@@ -141,7 +139,7 @@ public class KeyController extends BaseController
             return;
         }
         String majorId = getPara("majorId");
-        LogKit.info("math:listKey req majorId=" + majorId + user.getStr("userId"));
+        LogKit.info("math:listKey req openId = " + user.getStr("openId") +  "|majorId=" + majorId + user.getStr("userId"));
         if (StrKit.isBlank(majorId))
         {
             renderJson(Ret.fail("msg", "请求参数错误"));

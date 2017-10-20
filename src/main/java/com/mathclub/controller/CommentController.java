@@ -53,23 +53,23 @@ public class CommentController extends BaseController
     @ActionKey("/message:commentList")
     public void findCommentList()
     {
-        User user = getLoginUser();
+        /*User user = getLoginUser();
         if (user == null)
         {
             renderJson(Ret.fail("msg", "没有该用户"));
             return;
-        }
+        }*/
         
         String subjectId = getPara("subjectId");
         String page = getPara("page");
         String size = getPara("size");
-        LogKit.info("message:commentList request page=" + page + "--size=" + size);
+        //LogKit.info("message:commentList request openid="+ user.getStr("openId") +"|page=" + page + "--size=" + size);
         if (StrKit.isBlank(page) || StrKit.isBlank(size))
         {
             renderJson(Ret.fail("msg", "请求参数为空"));
             return;
         }
-        renderJson(commentService.getCommentList(user, subjectId,
+        renderJson(commentService.getCommentList(null, subjectId,
             Integer.valueOf(page), Integer.valueOf(size)));
     }
 
