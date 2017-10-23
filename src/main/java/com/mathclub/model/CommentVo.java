@@ -6,6 +6,8 @@ package com.mathclub.model;
 import java.util.Date;
 import java.util.List;
 
+import com.jfinal.plugin.activerecord.Record;
+
 /**
  * 评论
  * 
@@ -26,7 +28,7 @@ public class CommentVo {
 	private String text;// 评论内容
 	private int isToSys;// 是否发送给管理员
 	private int parentId;// 父评论ID
-	private List<CommentVo> reply;// 回复的内容
+	private List<Record> reply;// 回复的内容
 	private Date createTime;// 创建时间
 
 	public String getSubjectName()
@@ -131,12 +133,12 @@ public class CommentVo {
 		this.parentId = parentId;
 	}
 	
-    public List<CommentVo> getReply()
+    public List<Record> getReply()
     {
         return reply;
     }
 
-    public void setReply(List<CommentVo> reply)
+    public void setReply(List<Record> reply)
     {
         this.reply = reply;
     }
